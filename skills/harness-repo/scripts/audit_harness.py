@@ -78,6 +78,16 @@ def read_small_text(path: Path, limit: int = 120_000) -> str:
         return ""
 
 
+def is_repo_guidance_file(path: str) -> bool:
+    """Return true for files likely to describe the repo harness itself."""
+    lower = path.lower()
+    name = Path(path).name.lower()
+    return (
+        name in {"agents.md", "agent.md", "readme.md", "readme.rst", "readme.txt"}
+        or lower.startswith(("docs/", "doc/", ".github/"))
+    )
+
+
 def find_files_containing(root: Path, patterns: list[re.Pattern[str]], files: list[Path]) -> list[str]:
     matches: list[str] = []
     for path in files:
@@ -119,6 +129,7 @@ def documentation_validation_commands(root: Path, files: list[Path]) -> list[str
         re.compile(r"\bcargo test\b"),
         re.compile(r"\bmake (?:test|lint|typecheck|check|build)\b"),
         re.compile(r"\bcheck_connection\.py\b"),
+        re.compile(r"\bvalidate_skills\.py\b"),
     ]
     evidence: list[str] = []
     for file in files:
@@ -164,6 +175,7 @@ def analyze(root: Path) -> dict:
     root = root.resolve()
     files = walk_files(root)
     rel_files = [rel(path, root) for path in files]
+    guidance_files = [path for path in files if is_repo_guidance_file(rel(path, root))]
 
     docs = [p for p in rel_files if p.lower().startswith(("docs/", "doc/"))]
     workflows = [p for p in rel_files if p.startswith(".github/workflows/")]
@@ -173,21 +185,21 @@ def analyze(root: Path) -> dict:
     architecture_patterns = [re.compile(r"architecture|dependency|layer|boundary|module", re.IGNORECASE)]
     observability_patterns = [re.compile(r"log|metric|trace|span|observability|telemetry|health", re.IGNORECASE)]
     plan_patterns = [re.compile(r"exec\s*plan|execution plan|decision log|progress", re.IGNORECASE)]
-    guardrail_patterns = [re.compile(r"lint|typecheck|mypy|ruff|eslint|schema|dependency rule|import rule", re.IGNORECASE)]
+    guardrail_patterns = [re.compile(r"guardrail|validator|frontmatter|installability|lint|typecheck|mypy|ruff|eslint|schema|dependency rule|import rule", re.IGNORECASE)]
 
     signals = [
         signal("agent entrypoint", exists_any(root, ["AGENTS.md", "AGENT.md", ".github/copilot-instructions.md"]), "Add a short root AGENTS.md that maps commands, docs, and repo norms for agents."),
         signal("human orientation", exists_any(root, ["README.md", "README.rst", "README.txt"]), "Add or update README with setup and project purpose; keep agent-only details in AGENTS.md."),
         signal("repository knowledge base", docs[:12], "Create a docs/ or docs/agents/ map for architecture, quality, plans, and operational truth."),
-        signal("architecture guidance", find_files_containing(root, architecture_patterns, files)[:12], "Document architecture boundaries and promote repeated boundary rules into checks."),
-        signal("execution-plan workflow", find_files_containing(root, plan_patterns, files)[:12], "Add a lightweight plan template for complex or multi-session work."),
-        signal("mechanical validation commands", (package_commands(root) + documentation_validation_commands(root, files))[:12], "Expose exact test/lint/type/build/smoke-check commands in AGENTS.md and CI."),
+        signal("architecture guidance", find_files_containing(root, architecture_patterns, guidance_files)[:12], "Document architecture boundaries and promote repeated boundary rules into checks."),
+        signal("execution-plan workflow", find_files_containing(root, plan_patterns, guidance_files)[:12], "Add a lightweight plan template for complex or multi-session work."),
+        signal("mechanical validation commands", (package_commands(root) + documentation_validation_commands(root, guidance_files))[:12], "Expose exact test/lint/type/build/smoke-check commands in AGENTS.md and CI."),
         signal("environment isolation", environment_evidence(root), "Document the repo-specific command runner, such as uv, npm, cargo, or go, so agents do not depend on global tools."),
         signal("CI workflows", workflows[:12], "Add CI for tests and high-value guardrails so agents get reliable feedback."),
         signal("test suite", tests[:12], "Add focused tests or smoke checks for critical behavior."),
         signal("agent-usable scripts", scripts[:12], "Create scripts for repeated validation, generation, audits, or maintenance tasks."),
-        signal("guardrail references", find_files_containing(root, guardrail_patterns, files)[:12], "Turn repeated quality expectations into local tooling with actionable errors."),
-        signal("observability/debugging guidance", find_files_containing(root, observability_patterns, files)[:12], "Document logs, metrics, traces, health endpoints, and debugging workflows agents can inspect."),
+        signal("guardrail references", find_files_containing(root, guardrail_patterns, guidance_files)[:12], "Turn repeated quality expectations into local tooling with actionable errors."),
+        signal("observability/debugging guidance", find_files_containing(root, observability_patterns, guidance_files)[:12], "Document logs, metrics, traces, health endpoints, and debugging workflows agents can inspect."),
         signal("PR/issue workflow", exists_any(root, [".github/pull_request_template.md", ".github/PULL_REQUEST_TEMPLATE.md", ".github/ISSUE_TEMPLATE"]), "Add PR/issue templates that ask for acceptance criteria and validation evidence."),
     ]
 

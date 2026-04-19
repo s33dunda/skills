@@ -27,11 +27,24 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
 | --- | --- | --- |
 | `harness-repo` | `skills/harness-repo` | Turn repositories into agent-legible, enforceable Codex harnesses. |
 
+## Validation
+
+Before publishing changes, validate the monorepo:
+
+```bash
+python3 scripts/validate_skills.py
+```
+
+This checks each installable skill for required frontmatter, eval metadata, and Python helper syntax.
+
 ## Repository Layout
 
 ```text
 .
+├── AGENTS.md
 ├── README.md
+├── scripts/
+│   └── validate_skills.py
 └── skills/
     └── harness-repo/
         ├── SKILL.md

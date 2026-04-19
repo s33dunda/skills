@@ -11,3 +11,11 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
 ## Available Skills
 
 - `harness-repo`: Turn repositories into agent-legible, enforceable Codex harnesses.
+
+## Contributor Check
+
+From the repo root, run:
+
+```bash
+python3 scripts/validate_skills.py
+```
