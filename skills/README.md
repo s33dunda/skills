@@ -10,7 +10,7 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
 
 ## Available Skills
 
-- `harness-repo`: Turn repositories into agent-legible, enforceable Codex harnesses.
+- `cultivate`: Turn repositories into agent-legible, enforceable Codex cultivatees.
 
 ## Contributor Check
 

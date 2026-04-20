@@ -9,7 +9,7 @@ Install a skill from this repo with the bundled `skill-installer` helper:
 ```bash
 python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
   --repo s33dunda/skills \
-  --path skills/harness-repo
+  --path skills/cultivate
 ```
 
 After installing, restart Codex to pick up new skills.
@@ -18,14 +18,14 @@ You can also install from a GitHub URL:
 
 ```bash
 python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --url https://github.com/s33dunda/skills/tree/main/skills/harness-repo
+  --url https://github.com/s33dunda/skills/tree/main/skills/cultivate
 ```
 
 ## Skills
 
 | Skill | Path | Purpose |
 | --- | --- | --- |
-| `harness-repo` | `skills/harness-repo` | Turn repositories into agent-legible, enforceable Codex harnesses. |
+| `cultivate` | `skills/cultivate` | Turn repositories into agent-legible, enforceable Codex cultivatees. |
 
 ## Validation
 
@@ -46,7 +46,7 @@ This checks each installable skill for required frontmatter, eval metadata, and 
 ├── scripts/
 │   └── validate_skills.py
 └── skills/
-    └── harness-repo/
+    └── cultivate/
         ├── SKILL.md
         ├── evals/
         ├── references/
