@@ -31,8 +31,8 @@ def main():
         print(f"### [{ev_icon}] Eval {ev_id}")
         print(f"\n> {ev_prompt[:120]}...\n")
         for g in ev.get("graded", []):
-            check = "+" if g["passed"] else "x"
-            print(f"- {check} {g['text']}")
+            check = "+" if g.get("passed") else "x"
+            print(f"- {check} {g.get('text', '')}")
         print()
 
 

@@ -32,6 +32,10 @@ Complete this task following the skill instructions. If the skill produces a fil
         return result.stdout if result.returncode == 0 else f"ERROR: {result.stderr}"
     except subprocess.TimeoutExpired:
         return "ERROR: timeout expired after 120s"
+    except FileNotFoundError:
+        return "ERROR: claude CLI not found on PATH"
+    except OSError as exc:
+        return f"ERROR: failed to invoke claude CLI: {exc}"
 
 
 def grade(output, assertions):
@@ -70,7 +74,7 @@ def grade(output, assertions):
         elif "open questions" in text.lower():
             passed = "open questions" in lo or "tbd" in lo
         else:
-            passed = len(output) > 100
+            passed = len(output) > 100 and not output.lstrip().startswith("ERROR:")
 
         results.append({"text": text, "passed": passed, "evidence": evidence})
     return results
