@@ -104,26 +104,44 @@ jobs:
           pattern: eval-results-*
           merge-multiple: true
 
-      - name: Post PR comment
-        uses: actions/github-script@v7
+      - name: Build comment body
+        id: build-comment
+        run: |
+          python3 - <<'EOF'
+          import json, glob, os
+
+          files = sorted(glob.glob('eval-results-*.json'))
+          results = []
+          for f in files:
+              try:
+                  results.append(json.load(open(f)))
+              except Exception:
+                  pass
+
+          if not results:
+              print("BODY=")
+          else:
+              rows = []
+              for r in results:
+                  icon = "PASS" if r.get("pass_rate", 0) >= 0.6 else "FAIL"
+                  rows.append(f"| {icon} | `{r['skill_name']}` | {r['passed']}/{r['total']} | {round(r['pass_rate']*100)}% |")
+              details = "\n\n".join(r.get("details", "") for r in results)
+              body = (
+                  "## Skill Eval Results\n\n"
+                  "| Status | Skill | Passed | Score |\n"
+                  "|--------|-------|--------|-------|\n"
+                  + "\n".join(rows)
+                  + "\n\n<details><summary>Per-eval breakdown</summary>\n\n"
+                  + details
+                  + "\n</details>"
+              )
+              with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+                  fh.write(f"body<<ENDOFBODY\n{body}\nENDOFBODY\n")
+          EOF
+
+      - name: Post sticky PR comment
+        if: steps.build-comment.outputs.body != ''
+        uses: marocchino/sticky-pull-request-comment@v2
         with:
-          script: |
-            const fs = require('fs');
-            const results = [];
-            const files = fs.readdirSync('.').filter(f => f.startsWith('eval-results-') && f.endsWith('.json'));
-            for (const file of files) {
-              try { results.push(JSON.parse(fs.readFileSync(file, 'utf8'))); } catch {}
-            }
-            if (!results.length) return;
-            const rows = results.map(r => {
-              const icon = r.pass_rate >= 0.6 ? 'PASS' : 'FAIL';
-              return `| ${icon} | \`${r.skill_name}\` | ${r.passed}/${r.total} | ${Math.round(r.pass_rate*100)}% |`;
-            }).join('\n');
-            const details = results.map(r => r.details || '').join('\n\n');
-            const body = `## Skill Eval Results\n\n| Status | Skill | Passed | Score |\n|--------|-------|--------|-------|\n${rows}\n\n<details><summary>Per-eval breakdown</summary>\n\n${details}\n</details>`;
-            await github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body
-            });
+          header: skill-evals
+          message: ${{ steps.build-comment.outputs.body }}
