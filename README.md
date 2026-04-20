@@ -41,16 +41,16 @@ This checks each installable skill for required frontmatter, eval metadata, and 
 
 ```text
 .
-├── AGENTS.md
-├── README.md
-├── scripts/
-│   └── validate_skills.py
-└── skills/
-    └── cultivate/
-        ├── SKILL.md
-        ├── evals/
-        ├── references/
-        └── scripts/
++-- AGENTS.md
++-- README.md
++-- scripts/
+|   +-- validate_skills.py
++-- skills/
+    +-- cultivate/
+        +-- SKILL.md
+        +-- evals/
+        +-- references/
+        +-- scripts/
 ```
 
 Each skill directory is installable by passing its path to `install-skill-from-github.py`.

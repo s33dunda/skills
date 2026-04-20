@@ -1,6 +1,6 @@
 ---
 name: cultivate
-description: Cultivate a repository — prepare it so farmers (AI agents) can work it. Use this skill to make a repo agent-legible and enforceable: create or improve AGENTS.md, build a knowledge map, add execution-plan workflows, encode architecture guardrails, expose CI/lint/test feedback to agents, and reduce drift from agent-generated PRs. The cultivate skill is the bridge between a s33ded idea and a repo ready for farmers to execute on. Replaces cultivate.
+description: Cultivate a repository -- prepare it so farmers (AI agents) can work it. Use this skill to make a repo agent-legible and enforceable: create or improve AGENTS.md, build a knowledge map, add execution-plan workflows, encode architecture guardrails, expose CI/lint/test feedback to agents, and reduce drift from agent-generated PRs. The cultivate skill is the bridge between a seeded idea and a repo ready for farmers to execute on. Replaces cultivate.
 ---
 
 # Cultivate Repo

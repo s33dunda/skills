@@ -18,7 +18,7 @@ status: draft
 
 ## Audience
 
-<Who uses this? Be specific — "developers building MCP servers" is better than "developers".>
+<Who uses this? Be specific -- "developers building MCP servers" is better than "developers".>
 
 ## Scope (MVP)
 
@@ -47,7 +47,7 @@ status: draft
 
 ## Open Questions
 
-<Unresolved decisions that should be answered before or during s33d. Use TBD if genuinely unknown.>
+<Unresolved decisions that should be answered before or during seed. Use TBD if genuinely unknown.>
 
 ## Prospect (optional)
 
