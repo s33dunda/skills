@@ -17,6 +17,9 @@ def error(message: str) -> str:
     return f"ERROR: {message}"
 
 
+BLOCK_SCALAR_INDICATORS = {">", ">-", ">+", "|", "|-", "|+"}
+
+
 def parse_frontmatter(skill_md: Path) -> tuple[dict[str, str], list[str]]:
     problems: list[str] = []
     text = skill_md.read_text(encoding="utf-8")
@@ -30,14 +33,33 @@ def parse_frontmatter(skill_md: Path) -> tuple[dict[str, str], list[str]]:
         return {}, [error(f"{skill_md.relative_to(ROOT)} frontmatter is missing closing ---")]
 
     data: dict[str, str] = {}
-    for line in lines[1:end]:
+    i = 1
+    while i < end:
+        line = lines[i]
         if not line.strip() or line.strip().startswith("#"):
+            i += 1
+            continue
+        if line.startswith((" ", "\t")):
+            problems.append(error(f"{skill_md.relative_to(ROOT)} has orphaned continuation line: {line!r}"))
+            i += 1
             continue
         if ":" not in line:
             problems.append(error(f"{skill_md.relative_to(ROOT)} has malformed frontmatter line: {line!r}"))
+            i += 1
             continue
         key, value = line.split(":", 1)
-        data[key.strip()] = value.strip().strip('"').strip("'")
+        key = key.strip()
+        value = value.strip()
+        if value in BLOCK_SCALAR_INDICATORS:
+            continuation: list[str] = []
+            i += 1
+            while i < end and (not lines[i].strip() or lines[i].startswith((" ", "\t"))):
+                continuation.append(lines[i].strip())
+                i += 1
+            data[key] = " ".join(part for part in continuation if part)
+            continue
+        data[key] = value.strip('"').strip("'")
+        i += 1
 
     return data, problems
 

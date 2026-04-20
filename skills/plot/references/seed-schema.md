@@ -1,6 +1,6 @@
-# Plot Schema
+# Seed Schema
 
-The `plot.md` output format. The file opens with YAML frontmatter for machine-readable fields, followed by prose sections for richer context.
+The `seed.md` output format. The file opens with YAML frontmatter for machine-readable fields, followed by prose sections for richer context.
 
 ## Template
 

@@ -4,19 +4,19 @@
     {
       "id": 1,
       "prompt": "I want to build a CLI tool that helps developers manage multiple .env files across projects. Right now I just copy them around manually and it's a mess. I'm thinking Python, maybe with a TUI.",
-      "expected_output": "Ask about agents and success criteria if not provided, then produce a complete plot.md with name, tagline, stack, problem, audience, scope, agents, and success fields filled in.",
+      "expected_output": "Ask about agents and success criteria if not provided, then produce a complete seed.md with name, tagline, stack, problem, audience, scope, agents, and success fields filled in.",
       "files": []
     },
     {
       "id": 2,
       "prompt": "New project: an MCP server that wraps the Linear API. Target users are developers who use Claude Code and want to manage their Linear issues without leaving the terminal. TypeScript, using the MCP SDK. I want agents to write features and open PRs. MVP is just issues CRUD — create, read, update, close.",
-      "expected_output": "Extract most fields from context with minimal questions. Produce a thorough plot.md with agents field well-populated. Note it's ready for seed.",
+      "expected_output": "Extract most fields from context with minimal questions. Produce a thorough seed.md with agents field well-populated. Note it's ready for cultivate.",
       "files": []
     },
     {
       "id": 3,
       "prompt": "I have an idea for something. It's kind of like Zapier but for local scripts on your Mac.",
-      "expected_output": "Recognize this is very rough — ask open clarifying questions covering: what triggers the scripts, what problem it solves, who it's for, stack preferences. Do NOT produce plot.md yet.",
+      "expected_output": "Recognize this is very rough — ask open clarifying questions covering: what triggers the scripts, what problem it solves, who it's for, stack preferences. Do NOT produce seed.md yet.",
       "files": []
     }
   ]
