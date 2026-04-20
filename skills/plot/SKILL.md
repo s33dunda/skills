@@ -1,13 +1,13 @@
 ---
 name: plot
-description: Plot a project -- capture the minimum viable idea so it can be grown into a real repo. Use this skill whenever the user wants to kick off a new project, describe an idea, flesh out a concept, or produce a structured brief that downstream skills (s33d, cultivate) can act on. Trigger on phrases like "I want to build", "new project idea", "let's start a project", "make a plan for", "I have an idea", or any time the user is at the ideation stage before a repo exists. Plot reads whatever context already exists in the conversation -- don't re-ask things already established -- then asks targeted questions to fill the gaps. Output is a plot.md file: a structured, agent-legible brief.
+description: Plot a project -- capture the minimum viable idea so it can be grown into a real repo. Use this skill whenever the user wants to kick off a new project, describe an idea, flesh out a concept, or produce a structured brief that downstream skills (seed, cultivate) can act on. Trigger on phrases like "I want to build", "new project idea", "let's start a project", "make a plan for", "I have an idea", or any time the user is at the ideation stage before a repo exists. Plot reads whatever context already exists in the conversation -- don't re-ask things already established -- then asks targeted questions to fill the gaps. Output is a plot.md file: a structured, agent-legible brief.
 ---
 
 # Plot
 
 Plot is the first step in the agricultural workflow:
 
-**plot → s33d → cultivate → farmers**
+**plot → seed → cultivate → farmers**
 
 Its job is to capture the minimum viable idea -- enough signal that a repo can be created, seeded, and cultivated for AI agent execution. Think of it as turning a raw idea into a brief that removes ambiguity for every downstream step.
 
@@ -58,7 +58,7 @@ A good plot.md is:
 
 ### Step 5 -- Summarize And Hand Off
 
-After producing the file, give the user a brief summary of what was captured and call out any fields marked TBD that might need resolution before the s33d step. Suggest next steps (run s33d to create the repo, or run cultivate if a repo already exists).
+After producing the file, give the user a brief summary of what was captured and call out any fields marked TBD that might need resolution before the seed step. Suggest next steps (run seed to create the repo, or run cultivate if a repo already exists).
 
 ## Optional Enrichment Phases
 

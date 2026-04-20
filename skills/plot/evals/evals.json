@@ -10,7 +10,7 @@
     {
       "id": 2,
       "prompt": "New project: an MCP server that wraps the Linear API. Target users are developers who use Claude Code and want to manage their Linear issues without leaving the terminal. TypeScript, using the MCP SDK. I want agents to write features and open PRs. MVP is just issues CRUD — create, read, update, close.",
-      "expected_output": "Extract most fields from context with minimal questions. Produce a thorough plot.md with agents field well-populated. Note it's ready for s33d.",
+      "expected_output": "Extract most fields from context with minimal questions. Produce a thorough plot.md with agents field well-populated. Note it's ready for seed.",
       "files": []
     },
     {

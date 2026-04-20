@@ -47,7 +47,7 @@ status: draft
 
 ## Open Questions
 
-<Unresolved decisions that should be answered before or during s33d. Use TBD if genuinely unknown.>
+<Unresolved decisions that should be answered before or during seed. Use TBD if genuinely unknown.>
 
 ## Prospect (optional)
 
