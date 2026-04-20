@@ -1,6 +1,6 @@
 ---
-name: harness-repo
-description: Turn repositories into agent-legible, enforceable Codex harnesses. Use this skill whenever the user asks to make a repo easier for coding agents to work in, create or improve AGENTS.md, build a repository knowledge map, add execution-plan workflows, encode architecture/taste guardrails, improve agent review loops, expose CI/lint/test/observability feedback to agents, reduce drift from agent-generated PRs, or bootstrap an agent-ready repo even if they do not use the words "harness" or "Codex".
+name: cultivate
+description: Cultivate a repository — prepare it so farmers (AI agents) can work it. Use this skill to make a repo agent-legible and enforceable: create or improve AGENTS.md, build a knowledge map, add execution-plan workflows, encode architecture guardrails, expose CI/lint/test feedback to agents, and reduce drift from agent-generated PRs. The cultivate skill is the bridge between a s33ded idea and a repo ready for farmers to execute on. Replaces harness-repo.
 ---
 
 # Harness Repo
