@@ -66,19 +66,22 @@ jobs:
         id: evals
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SKILL: ${{ matrix.skill }}
         run: |
           python scripts/run_skill_evals.py \
-            --skill skills/${{ matrix.skill }} \
-            --evals skills/${{ matrix.skill }}/evals/evals.json \
-            --output eval-results-${{ matrix.skill }}.json \
+            --skill skills/$SKILL \
+            --evals skills/$SKILL/evals/evals.json \
+            --output eval-results-$SKILL.json \
             --pass-threshold 0.6
 
       - name: Post step summary
         if: always()
+        env:
+          SKILL: ${{ matrix.skill }}
         run: |
-          if [ -f eval-results-${{ matrix.skill }}.json ]; then
+          if [ -f eval-results-$SKILL.json ]; then
             python scripts/format_eval_summary.py \
-              eval-results-${{ matrix.skill }}.json >> $GITHUB_STEP_SUMMARY
+              eval-results-$SKILL.json >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: Upload eval results
