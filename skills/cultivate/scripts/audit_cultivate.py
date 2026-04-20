@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only repository harness scanner.
+"""Read-only repository cultivate scanner.
 
 Reports signals that make a repository easier for coding agents to navigate,
 validate, and maintain. The scanner is intentionally heuristic: it should guide
@@ -79,7 +79,7 @@ def read_small_text(path: Path, limit: int = 120_000) -> str:
 
 
 def is_repo_guidance_file(path: str) -> bool:
-    """Return true for files likely to describe the repo harness itself."""
+    """Return true for files likely to describe the repo cultivate itself."""
     lower = path.lower()
     name = Path(path).name.lower()
     return (
@@ -230,7 +230,7 @@ def analyze(root: Path) -> dict:
 
 
 def markdown_report(result: dict) -> str:
-    lines: list[str] = [f"# Harness Audit: `{result['repo']}`", "", f"Scanned files: {result['scanned_files']}", "", "## Signals", ""]
+    lines: list[str] = [f"# Cultivate Audit: `{result['repo']}`", "", f"Scanned files: {result['scanned_files']}", "", "## Signals", ""]
     for item in result["signals"]:
         lines.append(f"### {item['name']} - {item['status']}")
         if item["evidence"]:
@@ -256,7 +256,7 @@ def markdown_report(result: dict) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Audit repository harness signals for coding agents.")
+    parser = argparse.ArgumentParser(description="Audit repository cultivate signals for coding agents.")
     parser.add_argument("repo", nargs="?", default=".", help="Repository path to scan. Defaults to current directory.")
     parser.add_argument("--json", action="store_true", help="Emit JSON instead of Markdown.")
     args = parser.parse_args()

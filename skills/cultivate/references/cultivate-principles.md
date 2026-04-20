@@ -1,6 +1,6 @@
-# Harness Engineering Principles
+# Cultivate Engineering Principles
 
-This reference distills the harness-engineering approach into repository practices an agent can apply.
+This reference distills the cultivate-engineering approach into repository practices an agent can apply.
 
 ## Core Idea
 
@@ -34,15 +34,15 @@ For long or risky work, use checked-in execution plans with progress, decisions,
 
 ### Capture Taste Once, Apply Continuously
 
-When review feedback repeats, encode it in docs or tooling. If the same issue keeps appearing in agent PRs, the harness is missing a rule, template, test, or feedback loop.
+When review feedback repeats, encode it in docs or tooling. If the same issue keeps appearing in agent PRs, the cultivate is missing a rule, template, test, or feedback loop.
 
 ### Run Continuous Garbage Collection
 
 Agent-generated code tends to replicate local patterns, including weak ones. Schedule or prompt periodic cleanup passes for stale docs, duplicated helpers, drift from architecture, flaky tests, and quality gaps.
 
-## Harness Maturity Signals
+## Cultivate Maturity Signals
 
-Strong harnesses usually have:
+Strong cultivatees usually have:
 
 - A concise `AGENTS.md` with commands and links.
 - A docs map for architecture, product behavior, quality, reliability, security, and plans.
@@ -52,7 +52,7 @@ Strong harnesses usually have:
 - Observability or debugging paths for runtime behavior.
 - A process for retiring stale docs and bad patterns.
 
-Weak harnesses usually have:
+Weak cultivatees usually have:
 
 - No agent entrypoint, or a huge unstructured one.
 - Important knowledge trapped in tickets, chat, or people's heads.

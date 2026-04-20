@@ -1,4 +1,4 @@
-# Harness Repo Templates
+# Cultivate Repo Templates
 
 Use these templates as starting points. Keep them small and adapt them to the repository after inspection.
 
@@ -106,10 +106,10 @@ An execution plan should include:
 Keep the plan current as work proceeds. A future agent should be able to resume from the plan plus the current working tree.
 ```
 
-## Harness Audit Report
+## Cultivate Audit Report
 
 ```md
-# Harness Audit
+# Cultivate Audit
 
 ## Current State
 
