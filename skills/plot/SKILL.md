@@ -1,6 +1,14 @@
 ---
 name: plot
-description: Plot a project -- capture the minimum viable idea so it can be grown into a real repo. Use this skill whenever the user wants to kick off a new project, describe an idea, flesh out a concept, or produce a structured brief that downstream skills (seed, cultivate) can act on. Trigger on phrases like "I want to build", "new project idea", "let's start a project", "make a plan for", "I have an idea", or any time the user is at the ideation stage before a repo exists. Plot reads whatever context already exists in the conversation -- don't re-ask things already established -- then asks targeted questions to fill the gaps. Output is a plot.md file: a structured, agent-legible brief.
+description: >-
+  Plot a project -- capture the minimum viable idea so it can be grown into a real repo. Use
+  this skill whenever the user wants to kick off a new project, describe an idea, flesh out
+  a concept, or produce a structured brief that downstream skills (seed, cultivate) can act
+  on. Trigger on phrases like "I want to build", "new project idea", "let's start a
+  project", "make a plan for", "I have an idea", or any time the user is at the ideation
+  stage before a repo exists. Plot reads whatever context already exists in the conversation
+  -- don't re-ask things already established -- then asks targeted questions to fill the
+  gaps. Output is a plot.md file: a structured, agent-legible brief.
 ---
 
 # Plot
