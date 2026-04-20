@@ -1,10 +1,12 @@
 # Cultivate Engineering Principles
 
-This reference distills the cultivate-engineering approach into repository practices an agent can apply.
+This reference distills harness engineering into repository practices an agent can apply. The full canon lives in `harness-engineering.md`; read this file when you need the operational shortlist.
 
 ## Core Idea
 
 A coding agent is only as effective as the environment it can observe and act inside. Human time is scarce, so invest in repository structure, tools, checks, and feedback loops that let agents make progress without asking humans to copy context into prompts.
+
+Humans steer. Agents execute. The repository is the system of record.
 
 ## Principles
 
@@ -22,11 +24,19 @@ Start with a small entrypoint, then link to focused docs by topic. Agents should
 
 ### Enforce Architecture Mechanically
 
-Documentation helps, but repeated rules should become tests, linters, schema checks, or CI jobs. Enforce boundaries and invariants centrally while leaving local implementation freedom.
+Documentation helps, but repeated rules should become tests, linters, schema checks, or CI jobs. Enforce boundaries and invariants centrally while leaving local implementation freedom. When you write a custom lint, put the remediation instructions in the error message -- the violation becomes useful context for the next agent run.
+
+### Parse At The Boundary
+
+Data entering the system should be parsed into typed shapes once, at the edge. Downstream code should never probe or guess at external shapes. This prevents agents from replicating uncertain assumptions across the codebase.
+
+### Prefer Boring, Legible Dependencies
+
+Favor technologies with stable APIs, composable semantics, and strong representation in training data. Sometimes it is cheaper to reimplement a small, tightly integrated helper with full test coverage than to wrap an opaque upstream library.
 
 ### Make Validation Agent-Legible
 
-Agents need direct feedback. Prefer commands, logs, metrics, traces, screenshots, health checks, and reproducible workflows that an agent can run and interpret.
+Agents need direct feedback. Prefer commands, logs, metrics, traces, screenshots, health checks, and reproducible workflows that an agent can run and interpret. The more of the running application an agent can inspect programmatically, the more autonomy the harness can safely grant.
 
 ### Treat Plans As First-Class Artifacts
 
@@ -36,9 +46,17 @@ For long or risky work, use checked-in execution plans with progress, decisions,
 
 When review feedback repeats, encode it in docs or tooling. If the same issue keeps appearing in agent PRs, the cultivate is missing a rule, template, test, or feedback loop.
 
+### Agent Struggle Is Environment Signal
+
+When an agent repeatedly fails at a task, the reflex is not "try harder" or "have a human write it." It is: what capability, tool, guardrail, doc, or abstraction is missing, and how do we encode it so the agent can do it next time? Each fix becomes infrastructure for all future runs.
+
 ### Run Continuous Garbage Collection
 
-Agent-generated code tends to replicate local patterns, including weak ones. Schedule or prompt periodic cleanup passes for stale docs, duplicated helpers, drift from architecture, flaky tests, and quality gaps.
+Agent-generated code tends to replicate local patterns, including weak ones. Schedule or prompt periodic cleanup passes for stale docs, duplicated helpers, drift from architecture, flaky tests, and quality gaps. Technical debt behaves like a high-interest loan -- pay it down continuously rather than in painful bursts.
+
+### Match Merge Philosophy To Throughput
+
+When agent throughput outpaces human attention, corrections are cheap and waiting is expensive. Favor short-lived PRs, minimal blocking gates, and agent-to-agent review. This tradeoff only holds under strong architectural guardrails -- without them, cheap corrections compound into drift.
 
 ## Cultivate Maturity Signals
 

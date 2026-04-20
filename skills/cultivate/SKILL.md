@@ -1,23 +1,51 @@
 ---
 name: cultivate
 description: >-
-  Cultivate a repository -- prepare it so farmers (AI agents) can work it. Use this skill to
-  make a repo agent-legible and enforceable: create or improve AGENTS.md, build a knowledge
-  map, add execution-plan workflows, encode architecture guardrails, expose CI/lint/test
-  feedback to agents, and reduce drift from agent-generated PRs. The cultivate skill is the
-  bridge between a seeded idea and a repo ready for farmers to execute on. Replaces
-  cultivate.
+  Cultivate a repository -- prepare it so farmers (AI agents) can work it. Use this skill
+  whenever the user wants to make a repo agent-legible and enforceable, hand off a `seed.md`
+  from plot to an actual repository, add or improve `AGENTS.md`, build a knowledge map,
+  introduce execution-plan workflows, encode architecture guardrails, expose CI/lint/test
+  feedback to agents, or reduce drift from agent-generated PRs. Cultivate is applied
+  harness engineering -- it is the bridge between a seeded idea (or an existing repo) and
+  an environment where AI agents can execute reliably.
 ---
 
 # Cultivate Repo
 
 Use this skill to help an agent improve a repository as a working environment for future agents. The goal is not more documentation for its own sake. The goal is a repo where agents can discover context, verify behavior, respect architecture, and improve the system without relying on hidden human memory.
 
-The operating philosophy is: humans steer; agents execute; the repository is the system of record.
+## Operating Philosophy
+
+Cultivate is an applied form of harness engineering: humans steer, agents execute, the repository is the system of record. From an agent's perspective, anything it cannot access in the repository effectively does not exist. Cultivate's job is to make the things that matter -- intent, architecture, conventions, verification -- first-class, versioned, and mechanically enforceable without drowning the agent in prose.
+
+Read `references/harness-engineering.md` for the full conceptual foundation when a decision needs that grounding. Read `references/cultivate-principles.md` for the operational shortlist when picking what to change.
+
+## Entry Modes
+
+Cultivate is invoked in two shapes. Determine which one applies before doing anything else:
+
+- **Post-plot handoff.** A `seed.md` exists (produced by the `plot` skill) and describes the intended project. The repository may be empty, freshly scaffolded, or partially built. Start from the seed.
+- **Existing-repo audit.** No `seed.md`, but a real repository exists with code, conventions, and history. Start from the audit.
+
+The two modes converge once the initial read is complete, but the first step differs.
+
+## Start With The Seed (Post-Plot)
+
+If a `seed.md` is present at the repo root or supplied by the user, read it before anything else. It is the intent document cultivate should optimize the harness around.
+
+Extract and hold on to:
+
+- `name`, `tagline`, `stack`, and `status` from the frontmatter.
+- The **Agents** section -- what AI agents will actually do in this repo. This is the single most load-bearing field for cultivate, because it determines which harness investments pay off.
+- **Scope (MVP)** and explicit **Out** items -- these bound what the initial `AGENTS.md` should cover.
+- **Success** -- the observable shape of a working v1, which drives which validation commands belong in the harness now versus later.
+- **Constraints** and **Open Questions** -- anything the cultivate should flag as TBD rather than over-specifying.
+
+If the seed is sparse or inconsistent with what exists on disk, surface the mismatch to the user before extrapolating. The seed is not a contract with the code; it is intent, and intent drifts.
 
 ## Start With An Audit
 
-Before proposing or editing anything, inspect the target repository.
+Whether or not a seed was present, inspect the target repository before proposing changes.
 
 1. Find the repo root and read the nearest `AGENTS.md`, README, package manifests, CI workflows, and obvious docs indexes.
 2. If filesystem access is available, run the bundled scanner:
@@ -27,6 +55,7 @@ Before proposing or editing anything, inspect the target repository.
    ```
 
    Use `--json` when another tool or script will consume the output.
+
 3. Summarize the current cultivate in six categories:
    - Orientation: how an agent learns what this repo is and how to work in it.
    - Knowledge system: where product, architecture, plans, and operational truth live.
@@ -35,7 +64,7 @@ Before proposing or editing anything, inspect the target repository.
    - Autonomy workflow: how agents handle plans, reviews, PRs, fixes, and follow-up.
    - Entropy control: how drift, stale docs, flaky tests, and bad copied patterns are found and cleaned up.
 
-Do not begin by writing a large manual. Large instruction blobs crowd out task context, rot quickly, and become hard for agents to prioritize.
+Do not begin by writing a large manual. Large instruction blobs crowd out task context, rot quickly, and become hard for agents to prioritize -- treat `AGENTS.md` as a table of contents, not an encyclopedia.
 
 ## Implementation Strategy
 
@@ -51,6 +80,8 @@ Good first improvements are usually:
 - For Python repositories, prefer isolated commands such as `uv run pytest`, `uv run ruff check`, or `uv run python scripts/tool.py` when `uv.lock`, `pyproject.toml`, or existing docs indicate `uv` is the project runner.
 
 When the user asks to implement cultivate improvements, choose one focused slice unless they explicitly ask for a broad overhaul. Explain why that slice increases agent leverage.
+
+If a `seed.md` exists, let its **Agents** and **Success** fields narrow the slice. A repo whose agents will "run evals and open cleanup PRs" needs different scaffolding than a repo whose agents will "review PRs and respond to bug reports" -- do not build the generic harness when the seed tells you the specific one.
 
 ## What To Encode Where
 
@@ -82,11 +113,19 @@ Use prose to teach intent. Use tooling to apply repeated rules.
 
 Load only what is needed:
 
-- Read `references/cultivate-principles.md` when you need the conceptual checklist behind the skill.
+- Read `references/harness-engineering.md` when you need the full conceptual foundation (the source canon cultivate applies).
+- Read `references/cultivate-principles.md` when you need the operational checklist.
 - Read `references/templates.md` when drafting `AGENTS.md`, cultivate docs, quality docs, execution-plan guidance, or audit reports.
 - Run `scripts/audit_cultivate.py` when you need a quick read-only baseline.
 
 ## Output Patterns
+
+For a seed handoff, return:
+
+1. What you extracted from `seed.md` (especially the Agents and Success fields).
+2. The cultivate slice you recommend first, tied back to that intent.
+3. Any mismatches between seed and on-disk state that the user should resolve.
+4. Verification or rollout notes.
 
 For an audit-only request, return:
 
