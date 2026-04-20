@@ -1,40 +1,48 @@
 #!/usr/bin/env python3
 """Run skill evals using the Claude CLI and grade results."""
+
 import argparse
 import json
 import os
 import subprocess
 import sys
-import tempfile
+
 
 def run_eval(skill_path, prompt, skill_name):
     """Run a single eval with the skill loaded."""
+    with open(f'{skill_path}/SKILL.md') as f:
+        skill_content = f.read()
+
     full_prompt = f"""You have access to the following skill. Follow its instructions to complete the task.
 
 SKILL ({skill_name}):
 ---
-{open(f'{skill_path}/SKILL.md').read()}
+{skill_content}
 ---
 
 TASK: {prompt}
 
 Complete this task following the skill instructions. If the skill produces a file output, write it to the current directory."""
 
-    result = subprocess.run(
-        ["claude", "-p", full_prompt, "--output-format", "text"],
-        capture_output=True, text=True, timeout=120
-    )
-    return result.stdout if result.returncode == 0 else f"ERROR: {result.stderr}"
+    try:
+        result = subprocess.run(
+            ["claude", "-p", full_prompt, "--output-format", "text"],
+            capture_output=True, text=True, timeout=120
+        )
+        return result.stdout if result.returncode == 0 else f"ERROR: {result.stderr}"
+    except subprocess.TimeoutExpired:
+        return "ERROR: timeout expired after 120s"
+
 
 def grade(output, assertions):
     """Simple keyword-based grading."""
     results = []
     for a in assertions:
         text = a.get("text", "")
-        # Basic heuristics based on assertion text
         passed = False
         evidence = "auto-graded"
         lo = output.lower()
+
         if "yaml frontmatter" in text.lower() or "frontmatter" in text.lower():
             passed = output.strip().startswith("---") and "name:" in output and "tagline:" in output
         elif "agents section" in text.lower():
@@ -62,9 +70,11 @@ def grade(output, assertions):
         elif "open questions" in text.lower():
             passed = "open questions" in lo or "tbd" in lo
         else:
-            passed = len(output) > 100  # fallback: non-empty output
+            passed = len(output) > 100
+
         results.append({"text": text, "passed": passed, "evidence": evidence})
     return results
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -86,24 +96,30 @@ def main():
     details_lines = []
 
     for ev in evals:
-        prompt = ev["prompt"]
+        prompt = ev.get("prompt", "")
+        ev_id = ev.get("id", "unknown")
         assertions = ev.get("assertions", [])
-        print(f"Running eval {ev['id']}: {prompt[:60]}...", file=sys.stderr)
 
+        print(f"Running eval {ev_id}: {prompt[:60]}...", file=sys.stderr)
         output = run_eval(args.skill, prompt, skill_name)
         graded = grade(output, assertions)
-
         passed = sum(1 for g in graded if g["passed"])
         total = len(graded)
         total_passed += passed
         total_assertions += total
 
-        details_lines.append(f"**Eval {ev['id']}** — {passed}/{total} passed")
+        details_lines.append(f"**Eval {ev_id}** -- {passed}/{total} passed")
         for g in graded:
-            icon = "✓" if g["passed"] else "✗"
+            icon = "+" if g["passed"] else "x"
             details_lines.append(f"  {icon} {g['text']}")
 
-        all_results.append({"eval_id": ev["id"], "prompt": prompt, "output": output, "graded": graded, "pass_rate": passed/total if total else 0})
+        all_results.append({
+            "eval_id": ev_id,
+            "prompt": prompt,
+            "output": output,
+            "graded": graded,
+            "pass_rate": passed / total if total else 0
+        })
 
     overall_rate = total_passed / total_assertions if total_assertions else 0
     summary = {
@@ -120,6 +136,7 @@ def main():
 
     print(f"{skill_name}: {total_passed}/{total_assertions} ({overall_rate:.0%})", file=sys.stderr)
     sys.exit(0 if overall_rate >= args.pass_threshold else 1)
+
 
 if __name__ == "__main__":
     main()

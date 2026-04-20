@@ -21,8 +21,10 @@ jobs:
 
       - name: Detect changed skills with evals
         id: detect
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
-          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '^skills/' | cut -d'/' -f2 | sort -u)
+          CHANGED=$(git diff --name-only origin/$BASE_REF...HEAD | grep '^skills/' | cut -d'/' -f2 | sort -u)
           SKILLS_WITH_EVALS=()
           for skill in $CHANGED; do
             if [ -f "skills/$skill/evals/evals.json" ]; then
@@ -30,7 +32,11 @@ jobs:
             fi
           done
           echo "Changed skills with evals: ${SKILLS_WITH_EVALS[*]}"
-          SKILLS_JSON=$(printf '%s\n' "${SKILLS_WITH_EVALS[@]}" | jq -R . | jq -sc .)
+          if [ ${#SKILLS_WITH_EVALS[@]} -eq 0 ]; then
+            SKILLS_JSON="[]"
+          else
+            SKILLS_JSON=$(printf '%s\n' "${SKILLS_WITH_EVALS[@]}" | jq -R . | jq -sc .)
+          fi
           echo "skills=$SKILLS_JSON" >> "$GITHUB_OUTPUT"
 
   run-evals:

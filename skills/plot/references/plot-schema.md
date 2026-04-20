@@ -18,7 +18,7 @@ status: draft
 
 ## Audience
 
-<Who uses this? Be specific — "developers building MCP servers" is better than "developers".>
+<Who uses this? Be specific -- "developers building MCP servers" is better than "developers".>
 
 ## Scope (MVP)
 
