@@ -9,7 +9,8 @@ description: >-
   exists. Plot reads whatever context already exists in the conversation -- don't re-ask
   things already established -- then asks targeted questions to fill the gaps. Output is a
   seed.md file: a structured, agent-legible brief.
-version: "0.1.0"
+metadata:
+  version: "0.1.0"
 ---
 
 # Plot

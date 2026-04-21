@@ -11,6 +11,7 @@ agent workflow.
 ## Useful Commands
 
 - Validate skill packaging: `python3 scripts/validate_skills.py`
+- Run validator unit tests: `python3 scripts/test_validate_skills.py`
 - Install a skill from GitHub:
   `python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py --repo s33dunda/skills --path skills/<skill-name>`
 
@@ -19,6 +20,7 @@ agent workflow.
 - `skills/`: installable skill directories.
 - `skills/README.md`: index of available skills.
 - `scripts/validate_skills.py`: repo-level validation for skill structure and bundled Python scripts.
+- `scripts/test_validate_skills.py`: stdlib unittest fixtures for the validator (frontmatter allowlist, semver, metadata).
 
 ## Working Norms
 

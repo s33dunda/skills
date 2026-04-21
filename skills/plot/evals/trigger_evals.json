@@ -1,0 +1,82 @@
+[
+  {
+    "query": "I want to build a CLI tool that renames photo files based on EXIF date. Python probably. Just vibes, no plan yet.",
+    "should_trigger": true
+  },
+  {
+    "query": "ok so I've been thinking about this for weeks -- some kind of dashboard for tracking my running pace against my training plan. idk what stack. help me flesh it out",
+    "should_trigger": true
+  },
+  {
+    "query": "new project idea: MCP server that wraps the Stripe API for my team's side projects. want to hand it off to Claude Code agents once it's scaffolded",
+    "should_trigger": true
+  },
+  {
+    "query": "I have an idea. it's like LinkedIn but for your local community's mutual-aid networks. where do I even start",
+    "should_trigger": true
+  },
+  {
+    "query": "let's start a project -- a Go CLI that can diff any two JSON files semantically (ignoring key order, whitespace). called jdiff maybe. target audience is DevOps folks.",
+    "should_trigger": true
+  },
+  {
+    "query": "make a plan for a small rust crate that parses .editorconfig files into a typed struct. want it on crates.io eventually",
+    "should_trigger": true
+  },
+  {
+    "query": "hey so I want to do a thing where students can upload their resume and claude gives them feedback. next.js + supabase I think",
+    "should_trigger": true
+  },
+  {
+    "query": "kick off a new project: replacement for 1password for developers. I'm stuck, all the existing ones are bloated",
+    "should_trigger": true
+  },
+  {
+    "query": "trying to flesh out an idea for a typescript library that makes it dead simple to build retry logic with exponential backoff. think axios-retry but protocol-agnostic",
+    "should_trigger": true
+  },
+  {
+    "query": "I want to build a thing -- a menu bar app for mac that lets me paste clipboard history into any text field via fuzzy search",
+    "should_trigger": true
+  },
+  {
+    "query": "write a pytest fixture for mocking the Stripe SDK in my existing test suite",
+    "should_trigger": false
+  },
+  {
+    "query": "the plot on this matplotlib chart is cut off at the bottom -- help me fix the margins",
+    "should_trigger": false
+  },
+  {
+    "query": "I just finished seed.md for my new CLI project. what do I do next?",
+    "should_trigger": false
+  },
+  {
+    "query": "here's my seed.md -- add AGENTS.md to the repo",
+    "should_trigger": false
+  },
+  {
+    "query": "refactor this function to be more readable",
+    "should_trigger": false
+  },
+  {
+    "query": "can you review my project proposal doc for the team lead meeting?",
+    "should_trigger": false
+  },
+  {
+    "query": "what's the difference between kebab-case and snake_case in Python variable names?",
+    "should_trigger": false
+  },
+  {
+    "query": "I already have a repo with seed.md. cultivate it for me",
+    "should_trigger": false
+  },
+  {
+    "query": "help me debug why my express middleware isn't running in the right order",
+    "should_trigger": false
+  },
+  {
+    "query": "turn my scattered notes in notion into a structured product requirements doc",
+    "should_trigger": false
+  }
+]

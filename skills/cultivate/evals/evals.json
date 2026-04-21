@@ -5,25 +5,52 @@
       "id": 1,
       "prompt": "Make this unfamiliar repo easier for Codex agents to work in; add the smallest useful cultivate. Keep it practical and do not turn AGENTS.md into a giant manual.",
       "expected_output": "Audits the repo first, creates or proposes a short map-style AGENTS.md (table of contents, not encyclopedia), points to repo-local docs, and verifies referenced commands or paths where practical.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The model inspects the repository (reads files or runs commands) before producing AGENTS.md",
+        "The proposed AGENTS.md is under roughly 150 lines and is structured as a map/index, not a comprehensive manual",
+        "AGENTS.md points at concrete repo-local paths or docs rather than generic prose",
+        "Any command or path referenced in AGENTS.md is shown to exist in the repo (or explicitly flagged as missing)",
+        "The cultivate slice is scoped to the smallest useful investment rather than a full harness bundle"
+      ]
     },
     {
       "id": 2,
       "prompt": "We keep getting drift from agent PRs. Propose guardrails and implement one enforceable check for a recurring invariant instead of just adding more prose.",
       "expected_output": "Identifies the invariant, explains why tooling beats prose for repeated drift (capture taste once, enforce continuously), implements or sketches a narrow mechanical check with a remediation-aware error message, and includes a validation command.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The model names a specific invariant rather than discussing drift abstractly",
+        "The model explains why a mechanical check is preferable to more prose for a recurring invariant",
+        "A narrow script, lint rule, or test is implemented or concretely sketched (not just described)",
+        "The check emits a remediation-oriented error message pointing the reader at how to fix the violation",
+        "The response names an exact command to run the check locally (e.g. `python3 scripts/<name>.py`, `uv run ruff check`)"
+      ]
     },
     {
       "id": 3,
       "prompt": "Bootstrap an agent-first workflow for a small Python service without overengineering it. I want future agents to know how to test, plan bigger work, and avoid stale docs.",
       "expected_output": "Adds lightweight cultivate docs/templates suitable for a small Python service, names test/quality commands (prefers uv run ... if uv is detected), includes a plan workflow, and avoids enterprise-scale structure.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The cultivate slice adds only a lightweight set of docs (AGENTS.md plus at most a couple of focused files), not an enterprise-scale harness",
+        "Exact test and quality commands are named (e.g. pytest, ruff), with `uv run ...` form preferred when uv.lock or pyproject.toml indicate uv is the project runner",
+        "A plan/execution-plan workflow is included (template or docs/PLANS.md equivalent) for complex work",
+        "The output addresses doc staleness by encoding an invariant mechanically or by cross-referencing code, rather than by adding more prose"
+      ]
     },
     {
       "id": 4,
       "prompt": "I just finished a plot and have seed.md describing a new CLI project. The agents field says future agents will add new subcommands, write their own tests, and respond to user-filed bug reports. Cultivate the freshly-scaffolded repo.",
       "expected_output": "Reads seed.md first, extracts the Agents and Success fields, and proposes a cultivate slice sized to those specific agent responsibilities (e.g. test+lint commands, a new-subcommand pattern, a bug-report intake template) rather than a generic AGENTS.md. Calls out any mismatch between seed intent and on-disk state.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The model reads seed.md before proposing any cultivate changes",
+        "The model explicitly references the Agents and Success sections from seed.md",
+        "The proposed cultivate slice maps directly to the three agent responsibilities named in the prompt (new subcommands, writing tests, responding to bug reports)",
+        "The response calls out at least one mismatch, gap, or open question between seed intent and the on-disk repo state (or affirms alignment if none exists)",
+        "The output is not a generic AGENTS.md template — it names subcommand-pattern guidance, a test command, and a bug-report intake mechanism specific to this CLI project"
+      ]
     }
   ]
 }

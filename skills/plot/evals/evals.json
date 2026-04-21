@@ -5,19 +5,39 @@
       "id": 1,
       "prompt": "I want to build a CLI tool that helps developers manage multiple .env files across projects. Right now I just copy them around manually and it's a mess. I'm thinking Python, maybe with a TUI.",
       "expected_output": "Ask about agents and success criteria if not provided, then produce a complete seed.md with name, tagline, stack, problem, audience, scope, agents, and success fields filled in.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The model asks at least one clarifying question about what future agents will do on the project before finalizing seed.md",
+        "The model asks at least one clarifying question about success criteria before finalizing seed.md",
+        "The final output includes a seed.md file with frontmatter keys: name, tagline, stack, status",
+        "The seed.md body contains an Agents section, a Scope (MVP) section with explicit Out items, and a Success section",
+        "The seed.md captures the user-stated stack (Python) and the .env-file-management problem statement without inventing unrelated features"
+      ]
     },
     {
       "id": 2,
       "prompt": "New project: an MCP server that wraps the Linear API. Target users are developers who use Claude Code and want to manage their Linear issues without leaving the terminal. TypeScript, using the MCP SDK. I want agents to write features and open PRs. MVP is just issues CRUD — create, read, update, close.",
       "expected_output": "Extract most fields from context with minimal questions. Produce a thorough seed.md with agents field well-populated. Note it's ready for cultivate.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The model produces a seed.md without asking more than two clarifying questions, since the prompt already supplies stack, audience, agents, and MVP scope",
+        "The seed.md Agents section explicitly names agent responsibilities from the prompt (writing features and opening PRs)",
+        "The seed.md Scope (MVP) section lists the four CRUD operations named in the prompt (create, read, update, close)",
+        "The seed.md frontmatter stack field records TypeScript and the MCP SDK",
+        "The final response tells the user that seed.md is ready to hand off to the cultivate skill"
+      ]
     },
     {
       "id": 3,
       "prompt": "I have an idea for something. It's kind of like Zapier but for local scripts on your Mac.",
       "expected_output": "Recognize this is very rough — ask open clarifying questions covering: what triggers the scripts, what problem it solves, who it's for, stack preferences. Do NOT produce seed.md yet.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The model does NOT write a seed.md file in this turn",
+        "The model asks clarifying questions covering at least three of: trigger mechanism, problem being solved, target audience, stack preference",
+        "The model does not invent a concrete stack, name, or scope that was not stated by the user",
+        "The response explains (or implies) that more context is needed before the brief can be produced"
+      ]
     }
   ]
 }

@@ -1,0 +1,82 @@
+[
+  {
+    "query": "make this repo easier for Codex agents to work in. keep it small -- don't turn AGENTS.md into a giant manual",
+    "should_trigger": true
+  },
+  {
+    "query": "we keep getting drift from agent-generated PRs. add some guardrails and one enforceable check instead of just more prose",
+    "should_trigger": true
+  },
+  {
+    "query": "I just finished plot and have a seed.md for a new go cli project. cultivate the freshly-scaffolded repo please",
+    "should_trigger": true
+  },
+  {
+    "query": "set up AGENTS.md for this python service -- future claude sessions should know how to run tests and where to put new modules",
+    "should_trigger": true
+  },
+  {
+    "query": "add an execution-plan workflow for this repo so agents can tackle bigger multi-step changes with decision logs",
+    "should_trigger": true
+  },
+  {
+    "query": "turn my seed.md into the real deal -- I want the repo ready for farmers (the downstream AI agents)",
+    "should_trigger": true
+  },
+  {
+    "query": "the repo has no map. an LLM session drops in and has no idea where to look. fix it",
+    "should_trigger": true
+  },
+  {
+    "query": "audit this repo and encode the recurring drift as a mechanical check rather than a style-guide bullet point nobody reads",
+    "should_trigger": true
+  },
+  {
+    "query": "build a knowledge map for the codebase so when I hand it off to a new agent it can orient quickly without asking me questions",
+    "should_trigger": true
+  },
+  {
+    "query": "reduce agent hallucinations about where to put new files. what would you add to the repo?",
+    "should_trigger": true
+  },
+  {
+    "query": "write a README section explaining how to install this CLI so new users can get started",
+    "should_trigger": false
+  },
+  {
+    "query": "fix the broken CI on main -- the ruff job has been failing for two days",
+    "should_trigger": false
+  },
+  {
+    "query": "I want to create a new skill for generating slack gifs from a prompt",
+    "should_trigger": false
+  },
+  {
+    "query": "kick off a new side project -- a static site for my dad's woodworking shop, wordpress is overkill",
+    "should_trigger": false
+  },
+  {
+    "query": "I have an idea for a tool that helps gardeners track seedlings across seasons",
+    "should_trigger": false
+  },
+  {
+    "query": "plow through this PR backlog and tell me which ones are ready to merge today",
+    "should_trigger": false
+  },
+  {
+    "query": "what's the best way to structure a monorepo for a frontend + API stack? I haven't started yet, just sketching",
+    "should_trigger": false
+  },
+  {
+    "query": "cultivate a conversation with this customer about their onboarding friction and write up what you learn",
+    "should_trigger": false
+  },
+  {
+    "query": "add more OpenAPI documentation to the REST endpoints in this FastAPI service",
+    "should_trigger": false
+  },
+  {
+    "query": "I'm starting a new repo from scratch -- help me pick a name and language first",
+    "should_trigger": false
+  }
+]
