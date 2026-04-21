@@ -22,6 +22,12 @@ agent workflow.
 - `scripts/validate_skills.py`: repo-level validation for skill structure and bundled Python scripts.
 - `scripts/test_validate_skills.py`: stdlib unittest fixtures for the validator (frontmatter allowlist, semver, metadata).
 
+## Execution Plans
+
+For multi-skill or cross-cutting work (e.g. `SKILL.md` + evals + references + `CHANGELOG.md` in a single effort), open an ExecPlan under `docs/plans/<slug>.md`. Convention: `docs/PLANS.md`. Template: `docs/plans/_template.md` (mirrors the canonical skeleton in `skills/cultivate/references/templates.md`). Resolve ambiguity autonomously; record decisions in the plan's `Decision Log` rather than pausing to ask.
+
+Single-file changes do not need a plan.
+
 ## Working Norms
 
 Keep each skill self-contained. Put reusable guidance in `references/`, deterministic helpers in
