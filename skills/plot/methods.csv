@@ -1,0 +1,16 @@
+num,category,method_name,description,output_pattern
+1,framing,First Principles on Problem,Strip the idea to its root friction - what pain exists that this specifically removes and why does it matter now,idea → core pain → clarified problem
+2,framing,5 Whys on Motivation,Ask why five times on "why build this" to expose the real driver underneath the stated one - powerful for taglines that actually land,surface driver → deeper driver → root motivation
+3,framing,User Persona Zoom,Pick one concrete user and walk through their week with vs without this tool - surfaces audience specificity and validates the value claim,persona → before → after → value statement
+4,framing,Tagline Smoke Test,Draft three one-sentence taglines with different emphases then delete the two that don't survive cutting - forces the tagline to earn its words,drafts → cuts → winner
+5,framing,Stack Rationale,Name the stack choice and the tradeoffs being accepted - exposes undecideds and prevents resume-driven architecture,choice → tradeoff → reason
+6,framing,Socratic Sweep,For each stated claim ask "what assumption is this resting on" - useful when the idea feels too polished too early,claim → assumption → validity check
+7,scope,MVP Slice,What's the thinnest possible v1 that proves the core claim - everything else goes to explicit Out,must-have → nice-to-have → explicit outs
+8,scope,Explicit Outs,Name three tempting features we are NOT building and why - the explicit list prevents scope creep more than the in-list does,temptations → reasons → deferred list
+9,scope,Success Definition,Specify the command observation or ship moment that tells you v1 works - make it runnable or measurable not aspirational,v1 scenario → observable → success criteria
+10,agent,Agent Tasks Inventory,Enumerate concrete tasks an AI agent will own in this repo - write features open PRs run evals ship releases triage issues,tasks → owners → cultivate implications
+11,agent,Cultivate Alignment,For each agent task name what cultivate must encode (AGENTS.md sections CI feedback loops lint rules plan workflow) - bridges plot to cultivate,task → harness need → AGENTS.md implications
+12,risk,Pre-mortem,It is six months in and the project died - write the autopsy then work backward to today's preventions,dead project → causes → today's preventions
+13,risk,Constraints Audit,Surface hard constraints - timeline team size hard dependencies existing systems that cannot change,categories → specifics → impact on scope
+14,context,Prior Art Survey,What existing projects cover similar ground and how is this 10x different - positioning without this is fragile,similar → differences → positioning
+15,context,Competitive Complaint Scan,What do users of similar tools complain about - their frustrations are your openings,competitors → complaints → openings

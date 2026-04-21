@@ -10,7 +10,7 @@ description: >-
   things already established -- then asks targeted questions to fill the gaps. Output is a
   seed.md file: a structured, agent-legible brief.
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Plot
@@ -21,72 +21,107 @@ Plot is the first step in the agricultural workflow:
 
 Its job is to capture the minimum viable idea -- enough signal that a repo can be created, seeded, and cultivated for AI agent execution. Think of it as turning a raw idea into a brief that removes ambiguity for every downstream step.
 
-## How To Run A Plot
+---
 
-### Step 1 -- Read The Thread First
+## CRITICAL LLM INSTRUCTIONS
 
-Before asking anything, scan the current conversation for already-established context. Extract anything that answers the fields in the seed schema (see `references/seed-schema.md`). The user may have already explained the project at length. Don't waste their time repeating questions.
+- **MANDATORY:** Execute the steps in FLOW in exact order.
+- Do NOT skip Step 1. Gather before you ask.
+- Do NOT dump a wall of questions on the user. Use the menu-driven elicitation loop.
+- **HALT** after presenting the menu and after every "apply these changes?" prompt. Wait for user input.
+- Write `seed.md` only when the user picks `x`.
 
-Build a mental draft of the seed.md from what's already known.
+---
 
-### Step 2 -- Identify The Gaps
+## FLOW
 
-Compare what you extracted against the required fields. Only ask about what's genuinely missing or ambiguous. A good plot session should feel like a focused conversation, not a form.
+### Step 1 -- Gather Ambient Context
 
-Required fields (must be present in final output):
+Before asking anything, collect signal from three sources in parallel:
 
-- `name` -- kebab-case project identifier
-- `tagline` -- one sentence: what it does and for whom
-- `problem` -- the core problem or friction being removed
-- `stack` -- primary language(s), frameworks, runtime -- even rough preferences count
+1. **Conversation history.** Scan the current thread for already-stated project fields. The user may have explained the project at length already; don't waste their time repeating questions.
+2. **Working directory.** Scan the filesystem per `references/repo-signals.md` (git remote → name, manifests → stack, README → tagline/problem, existing `seed.md` → baseline).
+3. **Existing artifacts.** If `seed.md`, `plot.md`, or `AGENTS.md` exist, treat them as prior state to merge, not overwrite.
 
-Strongly recommended (ask if not obvious from context):
+Build a draft seed.md in memory. Fields without signal are `?`. Do not invent content.
 
-- `audience` -- who uses this? (can be "just me" that's fine)
-- `agents` -- what will AI agents actually _do_ in this repo? (write code? run evals? manage releases?) This shapes what cultivate will encode.
-- `scope` -- MVP boundary: what's in, what's explicitly out
-- `success` -- how does a working v1 look? what can you run or observe?
+### Step 2 -- Present the Status Board
 
-Optional enrichment (include if the user volunteers it, don't fish for it):
+Show the user exactly what was gathered and what's still missing, in the format documented in `references/repo-signals.md`. Keep it compact — no more than 10 lines.
 
-- `constraints` -- timeline, team size, hard dependencies, existing systems
-- `prospect` -- Market or competitive context
-- `survey` -- Prior technical research or existing code references
+### Step 3 -- Offer Elicitation Methods
 
-### Step 3 -- Ask Questions In One Pass
+Load `./methods.csv`. The CSV columns are: `num, category, method_name, description, output_pattern`.
 
-Ask all your gap-filling questions at once rather than one at a time. Group related questions naturally. Keep it conversational -- this is a planning chat, not an intake form.
+**Smart Selection.** Pick 5 methods that best fit the current gaps:
 
-If the idea is very rough, lead with open questions. If the idea is well-formed but missing a few specifics, go narrow and targeted.
+- Methods 1-2 should target the most urgent gaps (required fields still `?`: name, tagline, stack, problem).
+- Methods 3-5 may explore recommended fields (audience, scope, agents, success) or apply critical techniques (risk, context).
+- Always include at least one `agent`-category method if `agents` is `?` — that field drives cultivate.
+- Balance categories. Don't pick 5 from the same category unless all gaps cluster there.
 
-### Step 4 -- Produce seed.md
+**Display Format:**
 
-Once you have enough to fill the required fields, write `seed.md` to the working directory. Follow the schema in `references/seed-schema.md`. The file should be readable by both humans and agents.
+```
+**Plot Elicitation Options**
+Choose a number (1-5), [r] to Reshuffle, [a] List All, [f] Free-form, or [x] to Write seed.md:
 
-A good seed.md is:
+1. [Method Name] — [one-line from description]
+2. [Method Name] — [one-line from description]
+3. [Method Name] — [one-line from description]
+4. [Method Name] — [one-line from description]
+5. [Method Name] — [one-line from description]
+r. Reshuffle the list with 5 new options
+a. List all methods with descriptions
+f. Free-form — you describe, I extract
+x. Write seed.md now (unknowns marked TBD)
+```
 
-- Specific enough that a developer (human or agent) can start making real decisions
-- Honest about what's unknown or TBD
-- Free of marketing fluff -- just clear signal
-- Written in a way that cultivate can use directly to draft AGENTS.md
+**HALT and await response.**
 
-### Step 5 -- Summarize And Hand Off
+### Step 4 -- Handle the Response
 
-After producing the file, give the user a brief summary of what was captured and call out any fields marked TBD that might need resolution before cultivate runs. Suggest running `cultivate` next to prepare a repo from the `seed.md` (or against an existing repo).
+**Case 1-5 (numbered method):**
 
-## Optional Enrichment Phases
+1. Execute the selected method using its `description` and `output_pattern` from the CSV.
+2. Apply it to the current draft — ask the 1-2 targeted questions the method calls for, using whatever persona / framing the method prescribes.
+3. **HALT** for the user's answer.
+4. Update the draft with what you heard. Show only the fields that changed.
+5. Ask: **"Apply these changes to the draft? (y/n/edit)"** and **HALT**.
+6. If `y`: persist. If `n`: discard. If `edit` or any other reply: apply the user's revision.
+7. Re-present the Step 2 status board + the Step 3 menu.
 
-If the user explicitly asks for research before plotting, or if the idea clearly needs it, two enrichment phases can precede the final plot:
+**Case r (Reshuffle):** Pick 5 different methods from the CSV using Smart Selection, re-present the menu.
 
-**prospect** -- Market and competitive landscape. Who else is doing this? What do users of similar tools complain about? What would make this 10x better?
+**Case a (List All):** Compact table of every method (`num`, `method_name`, `description`). Let the user pick by number; then execute as Case 1-5.
 
-**survey** -- Technical landscape. What libraries, frameworks, or existing repos are relevant? What prior art exists in the user's own codebase?
+**Case f (Free-form):** Invite the user to describe the project however they want. Extract fields from their prose, update the draft, then re-present the status board + menu.
 
-Both are optional. Plot is valid without them. If the user mentions either, do that research before writing seed.md and fold the findings into the relevant sections.
+**Case x (Proceed):** Go to Step 5.
+
+**Case: Direct Feedback** (user responds with substantive content instead of a menu letter): Apply it to the draft as Case f. Re-present the menu.
+
+**Case: Multiple Numbers** (e.g. "1,3"): Execute each method in sequence, with a single "apply these changes?" prompt at the end. Re-present the menu.
+
+**Loop invariants:**
+
+- Always re-present the menu after each method.
+- The loop terminates only on `x` or explicit user override ("just write it", "good enough", etc.).
+- Never write `seed.md` mid-loop.
+
+### Step 5 -- Write seed.md and Hand Off
+
+When the user picks `x`:
+
+1. Write `seed.md` to the working directory using `references/seed-schema.md`. Mark any still-unknown fields as `TBD` rather than guessing.
+2. Summarize briefly: what was captured, what's `TBD`, any fields the user might want to resolve before cultivate runs.
+3. Suggest next step: running `cultivate` against the working directory (new repo) or the current repo (existing codebase).
+
+---
 
 ## Cultivate Alignment
 
-The `agents` field is the most important one for cultivate downstream. Cultivate's job is to make the repo legible and enforceable for AI agents -- but what that means depends entirely on what those agents will do.
+The `agents` field is the most important one for cultivate downstream. Cultivate's job is to make the repo legible and enforceable for AI agents — but what that means depends entirely on what those agents will do.
 
 Examples:
 
@@ -94,8 +129,11 @@ Examples:
 - "agents will run evals and publish results" → cultivate needs execution-plan conventions and structured output paths
 - "agents will manage releases" → cultivate needs version conventions, changelog format, and release scripts
 
-If the user hasn't thought about this, prompt them: "_What do you imagine AI agents doing in this project once the repo exists?"_
+If the user hasn't surfaced this by the end of the elicitation loop, the `Agent Tasks Inventory` and `Cultivate Alignment` methods in `methods.csv` exist precisely to close that gap.
 
 ## References
 
-Read `references/seed-schema.md` when writing seed.md -- it has the exact field definitions and a template.
+- `references/seed-schema.md` — the output artifact format; consult when writing `seed.md` in Step 5.
+- `references/repo-signals.md` — what to scan in Step 1 and how to build the status board.
+- `references/bmad-elicitation.md` — origins of the elicitation loop, divergences from upstream BMAD, and extension guide for `methods.csv`. Read before adding / removing / reshaping methods.
+- `methods.csv` — the elicitation method registry (BMAD-format: `num, category, method_name, description, output_pattern`).
