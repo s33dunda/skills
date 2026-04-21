@@ -4,6 +4,19 @@ All notable changes to the `plot` skill are documented in this file. The format
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this skill
 uses [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-04-21
+
+### Added
+
+- **No-gaps case in Smart Selection (`SKILL.md` Step 3).** When `seed.md`
+  already exists and every required + recommended field is populated, Smart
+  Selection now has an explicit rule: skew toward `risk` + `context` methods
+  (Pre-mortem, Constraints Audit, Prior Art Survey, Competitive Complaint
+  Scan), revisit `scope` if the seed is aging, include Cultivate Alignment
+  when plans may have evolved, and de-prioritize `framing` unless the core
+  pitch has drifted. Discovered during the 0.2.0 self-test against this repo
+  (seed was already complete) and logged as debt; closing it in 0.2.1.
+
 ## [0.2.0] - 2026-04-21
 
 ### Added

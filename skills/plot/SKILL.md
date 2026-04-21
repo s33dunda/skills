@@ -10,7 +10,7 @@ description: >-
   things already established -- then asks targeted questions to fill the gaps. Output is a
   seed.md file: a structured, agent-legible brief.
 metadata:
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # Plot
@@ -59,6 +59,23 @@ Load `./methods.csv`. The CSV columns are: `num, category, method_name, descript
 - Methods 3-5 may explore recommended fields (audience, scope, agents, success) or apply critical techniques (risk, context).
 - Always include at least one `agent`-category method if `agents` is `?` — that field drives cultivate.
 - Balance categories. Don't pick 5 from the same category unless all gaps cluster there.
+
+**No-gaps case (refinement mode).** When `seed.md` already exists and every
+required + recommended field is populated, Smart Selection shifts from
+gap-filling to pressure-testing. The user is refining a mature artifact, not
+plotting from scratch:
+
+- Skew toward `risk` and `context` categories (Pre-mortem, Constraints Audit,
+  Prior Art Survey, Competitive Complaint Scan). These stress-test claims and
+  surface positioning.
+- Revisit `scope` if the seed is more than a few weeks old — Explicit Outs and
+  Success Definition often need sharpening once the project has bumped into
+  reality.
+- Include one `agent`-category method (Cultivate Alignment) whenever the
+  user's plans for the repo might have evolved since the last cultivate run.
+- De-prioritize `framing`-category methods unless the user explicitly signals
+  the core pitch has drifted. First Principles on a solved problem wastes
+  the top-5 slots.
 
 **Display Format:**
 

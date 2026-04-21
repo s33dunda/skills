@@ -7,6 +7,7 @@ Plot's interactive loop (Step 3+ in `SKILL.md`) is a direct adoption of the [BMA
 BMAD (Breakthrough Method for Agile AI-Driven Development) is an open-source methodology that treats AI agents as first-class contributors in an agile workflow — analyst, PM, architect, dev, QA — each as a specialized persona with its own skills and outputs. The `core-skills` directory inside BMAD holds reusable techniques that any agent can invoke, and `bmad-advanced-elicitation` is the one that matters to plot.
 
 Source:
+
 - Repo: <https://github.com/bmad-code-org/BMAD-METHOD>
 - Skill: `src/core-skills/bmad-advanced-elicitation/SKILL.md`
 - Methods registry: `src/core-skills/bmad-advanced-elicitation/methods.csv` (50 methods across 11 categories)
@@ -82,3 +83,4 @@ Improvements that future `skill-creator`-driven iterations should consider:
 - **Persona seeding in framing methods.** `User Persona Zoom` currently asks the user to pick a persona. Could pre-suggest 2–3 based on extracted audience signal.
 - **Eval coverage for the loop itself.** Current `evals/evals.json` tests the seed.md artifact. No eval tests the loop discipline (does the skill actually HALT? does it re-present the menu?). A scripted eval harness that simulates menu responses would close this gap.
 - **Method decay weighting.** If a method fires repeatedly and produces the same "I don't know" response, the Smart Selection step should deprioritize it next reshuffle.
+- **Method effort annotation.** Some methods are conversational (ask 1–2 questions), others require research (Competitive Complaint Scan, Prior Art Survey). An `effort` column in `methods.csv` would let Smart Selection factor cost into the top-5 mix when the user is in a hurry.
