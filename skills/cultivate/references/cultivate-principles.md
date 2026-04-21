@@ -58,6 +58,38 @@ Agent-generated code tends to replicate local patterns, including weak ones. Sch
 
 When agent throughput outpaces human attention, corrections are cheap and waiting is expensive. Favor short-lived PRs, minimal blocking gates, and agent-to-agent review. This tradeoff only holds under strong architectural guardrails -- without them, cheap corrections compound into drift.
 
+### Write Command-First, Not Prose-First
+
+Every rule in `AGENTS.md` should map to an exact shell invocation whose exit code is the check. Replace "run the tests" with a named command. Replace "follow our style" with the linter invocation. Style guidance with no enforcement command is routinely ignored; style guidance with a one-line `ruff check` command is not.
+
+### Make Closure Explicit
+
+Include a `Definition of Done` in `AGENTS.md` and in every ExecPlan. Name the specific exit codes, HTTP responses, or observable behaviors that prove a task is complete. "I think I'm done" is the default failure mode for unsupervised agents; explicit closure criteria eliminate it.
+
+### Organize Instructions By Task
+
+Prefer `When Writing Code` / `When Reviewing` / `When Releasing` sections over flat style lists. Task-organized files let the agent pull only the rules relevant to the current turn. Flat lists force every rule to be parsed on every task, which is how instructions fall out of context on long runs.
+
+### Name The Never List
+
+Destructive recovery is the most expensive failure mode. When blocked, agents invent -- deleting lockfiles, force-pushing, bypassing tests, skipping validation. A short `Never` list in `AGENTS.md` (paired with concrete `When Blocked` escalation paths) prevents the class of failure the `Unresolved` report can't undo.
+
+### Respect The Size Budget
+
+Keep `AGENTS.md` under ~150 lines total and each section under ~50. Codex enforces a default 32 KiB limit (`project_doc_max_bytes`) and content beyond it is truncated. Front-load commands and closure; push style preferences and historical rationale to referenced docs.
+
+### Use Nested AGENTS.md For Monorepos
+
+Root `AGENTS.md` for project-wide rules; service or package `AGENTS.md` for local conventions. Tools concatenate from root to the working directory. In Codex, `AGENTS.override.md` replaces parent instructions -- reserve it for release freezes, incident mode, or paths with elevated security constraints.
+
+### ExecPlans Are Living Documents
+
+For multi-milestone or multi-hour work, use an ExecPlan with the mandatory sections (`Purpose`, `Progress`, `Surprises & Discoveries`, `Decision Log`, `Outcomes & Retrospective`, plus context/plan/steps/validation). Update the plan as work proceeds; resolve ambiguities inline and record them in the Decision Log rather than stopping.
+
+### Cultivate Runs Non-Interactively
+
+Once invoked, cultivate drives to a finished slice. Ambiguity gets resolved in favor of the smallest defensible interpretation; the operator sees the choice (and the alternatives) in the `Unresolved` output section, not as a mid-run question. Interactive ideation belongs to the `plot` skill, not cultivate.
+
 ## Cultivate Maturity Signals
 
 Strong cultivatees usually have:

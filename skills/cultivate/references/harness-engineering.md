@@ -2,12 +2,27 @@
 
 Cultivate is an applied form of harness engineering. This reference distills the source canon so an agent can cite it, reason from it, and apply it consistently without rediscovering the ideas each run.
 
-## Source
+## Sources
+
+Primary:
 
 - Ryan Lopopolo, "Harness engineering: leveraging Codex in an agent-first world," OpenAI, February 11, 2026. <https://openai.com/index/harness-engineering/>
-- Related: "Using PLANS.md for multi-hour problem solving" (OpenAI cookbook, ExecPlans).
-- Related: matklad, "ARCHITECTURE.md" (2021-02-06) -- the provenance of the short map-style architecture doc.
-- Related: Alexis King, "Parse, don't validate" -- the boundary-parsing pattern.
+- Aaron Friel, "Using PLANS.md for multi-hour problem solving," OpenAI Cookbook, October 7, 2025. <https://cookbook.openai.com/articles/codex_exec_plans>
+- Derrick Choi, "Modernizing your Codebase with Codex," OpenAI Cookbook, November 19, 2025. <https://cookbook.openai.com/examples/codex/code_modernization>
+- "Best practices -- Codex," OpenAI Developers (current). <https://developers.openai.com/codex/learn/best-practices>
+- "Custom instructions with AGENTS.md," OpenAI Developers (current). <https://developers.openai.com/codex/guides/agents-md/>
+
+Field research and synthesis:
+
+- Blake Crosley, "AGENTS.md Patterns: What Actually Changes Agent Behavior," February 28, 2026. <https://blakecrosley.com/blog/agents-md-patterns>
+- "AGENTS.md Guide (2026): Copilot, Cursor & More," Vibecoding. <https://vibecoding.app/blog/agents-md-guide>
+- "The Complete Guide to Agent Harness," harness-engineering.ai.
+- Tian Pan, "Harness Engineering: The Discipline That Determines Whether Your AI Agents Actually Work," February 17, 2026.
+
+Prior art:
+
+- matklad, "ARCHITECTURE.md," February 6, 2021 -- short map-style architecture doc.
+- Alexis King, "Parse, don't validate" -- boundary-parsing pattern.
 
 ## Core Thesis
 
@@ -68,6 +83,30 @@ Agent-generated code replicates local patterns, including the weak ones. Encode 
 ### Capture taste once, enforce continuously
 
 When review feedback repeats, that is a signal the harness is missing a rule, template, test, or feedback loop. Promote the taste into code or lint; let it apply everywhere at once forever.
+
+### Instructions are command-first, not prose-first
+
+The most reliable instruction-file patterns (Crosley, 2026; GitHub analysis of 2,500+ AGENTS.md repos) are operational rather than literary. Every rule the harness wants an agent to follow should map to an exact shell invocation whose exit code is the check. "Run the tests" is a suggestion; `` `uv run pytest -v` exits 0 `` is a rule. Style guides without an enforcement command reliably get ignored.
+
+### Closure is explicit, not felt
+
+"I think I'm done" is the most common failure mode for unsupervised agents. Encode `Definition of Done` as specific observable signals (exit codes, HTTP responses, log lines, file contents). An agent that cannot verify done-ness against a concrete check should not claim completion.
+
+### Three-tier action boundaries
+
+Productive harnesses partition actions into `Always` (safe, auto-run), `Ask` (requires human approval or narrow scoping), and `Never` (refused outright). Missing tiers produce either paralysis (nothing can run without asking) or drift (agents improvise destructive recoveries when blocked -- deleting lockfiles, bypassing checks, silently skipping tests). The `Never` list is as load-bearing as the `Always` list.
+
+### Semantic linting -- errors that teach
+
+Mechanical checks should not only fire; they should include the remediation inline. A custom lint message like "imports from `src/web/` into `src/core/` are forbidden (layering violation); move shared helpers to `src/core/shared/` or invert the dependency" turns every violation into context for the next agent run. Unhelpful errors waste turns; teaching errors compound into agent capability.
+
+### Escalation rules prevent improvisation
+
+When an agent is blocked, the default behavior is to invent a workaround. Explicit escalation paths (`If tests fail after 3 attempts: stop and report the failing test with full output`) and explicit prohibitions (`Never: delete files to resolve errors, force push, skip tests`) redirect the energy. Research on ambiguous bug reports (ICLR 2026 AMBIG-SWE) shows LLMs default to non-interactive behavior without explicit encouragement -- they proceed silently rather than ask, and resolve rates drop accordingly. The harness must name the moments where asking is required.
+
+### Hierarchy and override for multi-scope repos
+
+In a monorepo, a single root `AGENTS.md` is insufficient. Nested `AGENTS.md` files per service or package concatenate from root to the working directory; Codex additionally supports `AGENTS.override.md` to replace parent instructions. Use nesting for local conventions; use override for temporary states (release freezes, incident mode) or security-scoped paths.
 
 ## What To Optimize For
 

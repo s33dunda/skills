@@ -9,7 +9,7 @@ description: >-
   harness engineering -- it is the bridge between a seeded idea (or an existing repo) and
   an environment where AI agents can execute reliably.
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Cultivate Repo
@@ -21,6 +21,16 @@ Use this skill to help an agent improve a repository as a working environment fo
 Cultivate is an applied form of harness engineering: humans steer, agents execute, the repository is the system of record. From an agent's perspective, anything it cannot access in the repository effectively does not exist. Cultivate's job is to make the things that matter -- intent, architecture, conventions, verification -- first-class, versioned, and mechanically enforceable without drowning the agent in prose.
 
 Read `references/harness-engineering.md` for the full conceptual foundation when a decision needs that grounding. Read `references/cultivate-principles.md` for the operational shortlist when picking what to change.
+
+## Non-Interactivity Contract
+
+Cultivate runs to completion without menu-style prompts or confirmation gates. Ideation is `plot`'s job -- by the time cultivate is invoked, a `seed.md` or an existing repo is the input, and the skill is expected to execute against it.
+
+- Resolve ambiguity autonomously. When the seed is sparse, contradicts the working tree, or the repo has gaps, pick the smallest defensible interpretation and proceed. Record the choice and the alternatives in the handoff output, not mid-run as a question.
+- Do not ask "what do you want next?" between steps. Drive to a finished slice (audit, proposal, or applied change).
+- Unresolved questions are an output artifact -- a dedicated section in the handoff -- not a blocker.
+
+This mirrors the ExecPlans guidance from the OpenAI cookbook: "do not prompt the user for 'next steps'; simply proceed to the next milestone. Resolve ambiguities autonomously."
 
 ## Entry Modes
 
@@ -43,7 +53,7 @@ Extract and hold on to:
 - **Success** -- the observable shape of a working v1, which drives which validation commands belong in the harness now versus later.
 - **Constraints** and **Open Questions** -- anything the cultivate should flag as TBD rather than over-specifying.
 
-If the seed is sparse or inconsistent with what exists on disk, surface the mismatch to the user before extrapolating. The seed is not a contract with the code; it is intent, and intent drifts.
+If the seed is sparse or inconsistent with what exists on disk, do not stop. The seed is intent, not a contract with the code; intent drifts. Pick the smallest defensible reconciliation, proceed with it, and record the mismatch and the alternative interpretations in the handoff output so the next agent (or the operator reading the report) can correct course.
 
 ## Start With An Audit
 
@@ -89,13 +99,41 @@ If a `seed.md` exists, let its **Agents** and **Success** fields narrow the slic
 
 Use this division of responsibility:
 
-- `AGENTS.md`: short entrypoint. Include project map, high-value commands, important conventions, and links to deeper docs. Keep it scannable.
+- `AGENTS.md`: short entrypoint. Include project map, high-value commands, important conventions, and links to deeper docs. Keep it scannable. (Detailed shape rules below.)
 - `docs/`: durable repository knowledge such as architecture, product constraints, quality standards, troubleshooting, and execution-plan conventions. Humans and agents read the same files -- do not split into a separate `docs/agents/` unless `docs/` is already owned by a published site.
-- Scripts, tests, linters, schemas, CI: rules that should be enforced repeatedly or are easy to forget.
+- Scripts, tests, linters, schemas, CI: rules that should be enforced repeatedly or are easy to forget. Custom lint messages should include remediation text so violations teach the next agent.
 - Issue/PR templates: human-facing prompts that capture acceptance criteria, validation evidence, screenshots, logs, and rollout notes.
 - Generated docs: only for facts that can be regenerated or validated, such as schema summaries or command inventories.
 
 If a fact lives only in chat, a ticket, a meeting, or a person's head, treat it as invisible to future agents until it is encoded in the repo.
+
+## AGENTS.md Shape
+
+`AGENTS.md` is the open cross-tool standard read natively by Codex, Copilot, Cursor, Windsurf, Amp, and Devin (Claude Code uses `CLAUDE.md`; mirror, do not duplicate). The patterns that actually change agent behavior are operational, not literary.
+
+- **Command-first.** Every instruction should map to an exact shell invocation an agent can run and check the exit code of. Replace "run the tests" with ``Test: `uv run pytest -v` ``. Replace "follow our style" with a linter command.
+- **Definition of Done.** Include an explicit closure section: the specific exit codes and observable outputs that prove a task is complete. "I think I'm done" is the default failure mode; this eliminates it.
+- **Task-organized sections.** Prefer `When Writing Code` / `When Reviewing` / `When Releasing` over flat style lists. Agents select by task; flat lists force them to parse every rule every turn.
+- **Escalation rules.** Include `When Blocked` (what to do after N retries) and a `Never` list (destructive recovery patterns to refuse: deleting lockfiles, force-pushing, skipping tests).
+- **Three-tier action boundaries.** Always / Ask / Never. Always-allowed actions keep agents moving; Ask-required actions gate risky work; Never actions are hard refusals.
+- **Size discipline.** Keep sections under ~50 lines and the whole file under ~150. Codex enforces a default 32 KiB limit (`project_doc_max_bytes`) -- long files get truncated. Front-load commands and closure; defer style preferences.
+- **Hierarchy for monorepos.** Nest `AGENTS.md` per service or package; tools walk from repo root to the current directory and concatenate. In Codex, `AGENTS.override.md` replaces parent instructions (use for release freezes or security-sensitive paths).
+- **Mirror, don't duplicate.** `AGENTS.md` is canonical. If a team also uses `CLAUDE.md` or `.cursor/rules`, generate them from the same source rather than maintaining parallel instruction sets that will drift.
+
+Anti-patterns to strip out: prose paragraphs without commands, ambiguous directives ("be careful", "where possible"), contradictory priorities without explicit ordering, and style guides with no enforcement command.
+
+## ExecPlans (PLANS.md)
+
+For multi-hour, multi-milestone, or high-unknown work, cultivate installs an ExecPlan workflow. The pattern comes from the OpenAI cookbook ("Using PLANS.md for multi-hour problem solving") and has shaped Codex sessions that run for seven-plus hours from a single prompt.
+
+- Place the template at `docs/PLANS.md` (default) or `.agent/PLANS.md` (cookbook convention); either is fine. Reference it from `AGENTS.md` so agents know when and how to use it.
+- An ExecPlan is a _living document_. Mandatory sections: `Purpose / Big Picture`, `Progress`, `Surprises & Discoveries`, `Decision Log`, `Outcomes & Retrospective`, plus `Context and Orientation`, `Plan of Work`, `Concrete Steps`, `Validation and Acceptance`, `Idempotence and Recovery`, `Artifacts and Notes`, and `Interfaces and Dependencies`.
+- Every ExecPlan must be self-contained: a novice agent with no prior context should be able to read the plan plus the working tree and produce a working, observable result.
+- Acceptance is phrased as observable behavior ("after starting the server, `curl localhost:8080/health` returns `200 OK`"), not internal attributes.
+- Living-document discipline: decisions land in the Decision Log as they are made; unexpected findings land in Surprises & Discoveries; Progress is updated at every stopping point; Outcomes & Retrospective closes each major milestone.
+- **Agents do not prompt the user mid-plan.** They resolve ambiguity autonomously, record the decision, and continue. This matches cultivate's own non-interactivity contract.
+
+Reach for an ExecPlan when the seed's scope, a request's acceptance criteria, or an audit's remediation list exceeds what fits comfortably in one agent turn. Small changes get an ephemeral plan or no plan; cross-cutting refactors and greenfield features get an ExecPlan checked into the repo.
 
 ## Enforce Invariants, Not Taste Micromanagement
 
@@ -122,11 +160,13 @@ Load only what is needed:
 
 ## Output Patterns
 
+Cultivate always returns a finished artifact. Never end mid-run with a question back to the operator -- open items go into the `Unresolved` section of the output.
+
 For a seed handoff, return:
 
 1. What you extracted from `seed.md` (especially the Agents and Success fields).
 2. The cultivate slice you recommend first, tied back to that intent.
-3. Any mismatches between seed and on-disk state that the user should resolve.
+3. `Unresolved`: mismatches between seed and on-disk state, the interpretation you proceeded with, and the alternatives you rejected.
 4. Verification or rollout notes.
 
 For an audit-only request, return:
@@ -134,14 +174,15 @@ For an audit-only request, return:
 1. Current cultivate summary.
 2. Top gaps by leverage.
 3. Recommended first improvements.
-4. Verification or rollout notes.
+4. `Unresolved`: assumptions made during the audit and any repo questions the operator should confirm.
+5. Verification or rollout notes.
 
 For an implementation request, return:
 
 1. What you changed.
-2. Why it improves agent legibility or enforceability.
-3. What checks you ran.
-4. Any follow-up cultivate work worth doing next.
+2. Why it improves agent legibility or enforceability (cite the harness principle or AGENTS.md pattern invoked).
+3. What checks you ran and their observed results.
+4. `Unresolved`: follow-up cultivate work worth doing next, and any assumptions baked into the slice.
 
 ## Verification
 
