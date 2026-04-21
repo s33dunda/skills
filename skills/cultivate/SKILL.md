@@ -73,7 +73,7 @@ Prefer the smallest change that makes the next agent more capable.
 Good first improvements are usually:
 
 - A short root `AGENTS.md` that acts as a map, not an encyclopedia.
-- A repo-local docs index under `docs/` or `docs/agents/` that points to deeper sources of truth.
+- A repo-local docs index under `docs/` that points to deeper sources of truth (use a nested namespace like `docs/agents/` only when `docs/` is already owned by a published site).
 - A planning template for complex work, with decision and progress logs.
 - A mechanical check for one recurring invariant rather than more prose about the invariant.
 - A clear test/verification section that names exact commands and expected signals.
@@ -88,7 +88,7 @@ If a `seed.md` exists, let its **Agents** and **Success** fields narrow the slic
 Use this division of responsibility:
 
 - `AGENTS.md`: short entrypoint. Include project map, high-value commands, important conventions, and links to deeper docs. Keep it scannable.
-- `docs/` or `docs/agents/`: durable repository knowledge such as architecture, product constraints, quality standards, troubleshooting, and execution-plan conventions.
+- `docs/`: durable repository knowledge such as architecture, product constraints, quality standards, troubleshooting, and execution-plan conventions. Humans and agents read the same files -- do not split into a separate `docs/agents/` unless `docs/` is already owned by a published site.
 - Scripts, tests, linters, schemas, CI: rules that should be enforced repeatedly or are easy to forget.
 - Issue/PR templates: human-facing prompts that capture acceptance criteria, validation evidence, screenshots, logs, and rollout notes.
 - Generated docs: only for facts that can be regenerated or validated, such as schema summaries or command inventories.

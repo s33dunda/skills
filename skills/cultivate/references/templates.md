@@ -28,16 +28,16 @@ This repository contains [brief purpose]. Start with `README.md` for human setup
 
 ## Deeper Context
 
-- Architecture: `docs/agents/ARCHITECTURE.md`
-- Quality and verification: `docs/agents/QUALITY.md`
-- Complex work plans: `docs/agents/PLANS.md`
+- Architecture: `docs/ARCHITECTURE.md`
+- Quality and verification: `docs/QUALITY.md`
+- Complex work plans: `docs/PLANS.md`
 
 ## Working Norms
 
 Read the relevant docs before changing a subsystem. Prefer existing patterns and run the narrowest useful check before finishing. If a repeated rule matters, encode it in a test, lint, schema, or script rather than only adding prose.
 ```
 
-## `docs/agents/ARCHITECTURE.md`
+## `docs/ARCHITECTURE.md`
 
 ```md
 # Architecture Map
@@ -63,7 +63,7 @@ Describe where new behavior should be added and which existing helpers or patter
 List checks that enforce this architecture. If none exist, say which rule should be promoted into tooling first.
 ```
 
-## `docs/agents/QUALITY.md`
+## `docs/QUALITY.md`
 
 ```md
 # Quality And Verification
@@ -87,7 +87,7 @@ Document useful logs, metrics, traces, health endpoints, or debugging scripts.
 Track missing checks, flaky tests, stale generated files, and areas where agents need human judgment.
 ```
 
-## `docs/agents/PLANS.md`
+## `docs/PLANS.md`
 
 ```md
 # Execution Plans

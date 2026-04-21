@@ -5,12 +5,12 @@ A skill suite that turns an idea into an agent-ready repository. Distributed as 
 ## The Workflow
 
 ```
-plot  ->  seed.md  ->  cultivate  ->  farmers
+plot  ->  seed.md  ->  cultivate  ->  {AGENTS, ARCHITECTURE, QUALITY, PLANS}.md  ->  farmers
 ```
 
 - **`plot`** captures the minimum viable idea as a structured brief (`seed.md`).
 - **`seed.md`** is the handoff artifact: project identity, scope, stack, success criteria, agent surface, open questions.
-- **`cultivate`** reads `seed.md` (or audits an existing repo) and prepares the repository for agents -- `AGENTS.md`, knowledge map, architectural guardrails, execution-plan conventions, CI/lint/test feedback exposure. Cultivate is applied harness engineering.
+- **`cultivate`** reads `seed.md` (or audits an existing repo) and emits the harness bundle: `AGENTS.md` at the root plus `docs/ARCHITECTURE.md`, `docs/QUALITY.md`, `docs/PLANS.md`, together with mechanical checks, CI feedback, and execution-plan conventions. Cultivate is applied harness engineering.
 - **Farmers** are the agents that then work the repo. In *this* repo, farmers use Anthropic's [`skill-creator`](https://github.com/anthropics/skills) to iterate on the skills themselves.
 
 ## Install

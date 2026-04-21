@@ -190,7 +190,7 @@ def analyze(root: Path) -> dict:
     signals = [
         signal("agent entrypoint", exists_any(root, ["AGENTS.md", "AGENT.md", ".github/copilot-instructions.md"]), "Add a short root AGENTS.md that maps commands, docs, and repo norms for agents."),
         signal("human orientation", exists_any(root, ["README.md", "README.rst", "README.txt"]), "Add or update README with setup and project purpose; keep agent-only details in AGENTS.md."),
-        signal("repository knowledge base", docs[:12], "Create a docs/ or docs/agents/ map for architecture, quality, plans, and operational truth."),
+        signal("repository knowledge base", docs[:12], "Create a docs/ map for architecture, quality, plans, and operational truth."),
         signal("architecture guidance", find_files_containing(root, architecture_patterns, guidance_files)[:12], "Document architecture boundaries and promote repeated boundary rules into checks."),
         signal("execution-plan workflow", find_files_containing(root, plan_patterns, guidance_files)[:12], "Add a lightweight plan template for complex or multi-session work."),
         signal("mechanical validation commands", (package_commands(root) + documentation_validation_commands(root, guidance_files))[:12], "Expose exact test/lint/type/build/smoke-check commands in AGENTS.md and CI."),
