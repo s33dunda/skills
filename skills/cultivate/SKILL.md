@@ -9,7 +9,7 @@ description: >-
   harness engineering -- it is the bridge between a seeded idea (or an existing repo) and
   an environment where AI agents can execute reliably.
 metadata:
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # Cultivate Repo
@@ -40,6 +40,12 @@ Cultivate is invoked in two shapes. Determine which one applies before doing any
 - **Existing-repo audit.** No `seed.md`, but a real repository exists with code, conventions, and history. Start from the audit.
 
 The two modes converge once the initial read is complete, but the first step differs.
+
+### Default Output Shape
+
+A bare invocation -- "run cultivate against this seed", "cultivate this repo" -- resolves to an **applied change**, not a proposal. Drive to a committed slice: write the files, run the checks, report what landed. Propose-mode is an explicit opt-in ("propose a cultivate slice", "what would cultivate do here", "audit-only"). Audit-mode is an explicit opt-in ("audit this repo"). If the operator did not name a mode, apply.
+
+Applying means: pick the smallest high-leverage slice the audit and seed justify, write it, verify it, and return the implementation output pattern (what changed, why, checks, Unresolved). Do not ask whether to proceed.
 
 ## Start With The Seed (Post-Plot)
 
@@ -160,9 +166,13 @@ Load only what is needed:
 
 ## Output Patterns
 
-Cultivate always returns a finished artifact. Never end mid-run with a question back to the operator -- open items go into the `Unresolved` section of the output.
+Cultivate always returns a finished artifact. Concrete rules:
 
-For a seed handoff, return:
+- **Never append a "which of these next?" menu.** No trailing lists of options for the operator to pick from. No "tell me which" closers. No "say the word and I'll ...". The last section of the output is always `Unresolved` followed by `Verification`, in that order.
+- **Open items go into `Unresolved`.** Mismatches, assumptions, interpretations chosen and rejected, follow-up work worth doing -- all recorded as append-only content in `Unresolved`, not as mid-run questions.
+- **Pick the shape from the invocation**, using the `Default Output Shape` rules above. A bare invocation is an applied change; propose-only and audit-only are explicit opt-ins.
+
+For a seed handoff (propose-only opt-in), return:
 
 1. What you extracted from `seed.md` (especially the Agents and Success fields).
 2. The cultivate slice you recommend first, tied back to that intent.

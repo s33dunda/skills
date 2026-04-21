@@ -4,6 +4,28 @@ All notable changes to the `cultivate` skill are documented in this file. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 skill uses [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-04-21
+
+### Fixed
+
+- Non-interactivity contract enforced at the output boundary. Surfaced when
+  a cultivate run against a seed ended with a three-option "tell me which"
+  menu -- the exact pattern the 0.2.0 contract was supposed to eliminate.
+  The rule was encoded in prose but not enforced at the point where the
+  LLM produces output.
+
+### Added
+
+- **Output Patterns preamble** makes the no-menu rule explicit: never
+  append a "which of these next?" list, no "tell me which" closers, no
+  "say the word and I'll". Open items always go to `Unresolved`, which is
+  followed only by `Verification`.
+- **Default Output Shape** section clarifies what a bare invocation
+  resolves to: "run cultivate against this seed" or "cultivate this repo"
+  = applied change. Propose-only and audit-only are explicit opt-ins.
+  Closes the ambiguity between propose-mode and apply-mode that the
+  0.2.0 contract left unresolved.
+
 ## [0.2.0] - 2026-04-21
 
 ### Added
