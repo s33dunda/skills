@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import ast
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -18,6 +19,7 @@ def error(message: str) -> str:
 
 
 BLOCK_SCALAR_INDICATORS = {">", ">-", ">+", "|", "|-", "|+"}
+SEMVER = re.compile(r"^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$")
 
 
 def parse_frontmatter(skill_md: Path) -> tuple[dict[str, str], list[str]]:
@@ -84,6 +86,12 @@ def validate_skill(skill_dir: Path) -> list[str]:
 
     if not description:
         problems.append(error(f"{skill_md.relative_to(ROOT)} frontmatter is missing description"))
+
+    version = frontmatter.get("version")
+    if not version:
+        problems.append(error(f"{skill_md.relative_to(ROOT)} frontmatter is missing version"))
+    elif not SEMVER.match(version):
+        problems.append(error(f"{skill_md.relative_to(ROOT)} version {version!r} must be semver (X.Y.Z)"))
 
     evals_json = skill_dir / "evals" / "evals.json"
     if evals_json.exists():

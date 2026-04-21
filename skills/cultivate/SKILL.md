@@ -8,6 +8,7 @@ description: >-
   feedback to agents, or reduce drift from agent-generated PRs. Cultivate is applied
   harness engineering -- it is the bridge between a seeded idea (or an existing repo) and
   an environment where AI agents can execute reliably.
+version: "0.1.0"
 ---
 
 # Cultivate Repo

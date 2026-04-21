@@ -99,18 +99,16 @@ v1 is shipped when all of the following are observably true:
 
 ## Open Questions
 
-- **Plot output filename drift.** `skills/plot/SKILL.md` instructs agents to
-  write `plot.md`, but the intended artifact is `seed.md`. The plot skill's
-  own SKILL.md and references need updating to match.
-- **Release / versioning.** No story yet for how consumers learn that a skill
-  changed (no `version` frontmatter, no changelog convention). Decide before
-  cultivate consumers start pinning.
-- **`cultivate` entry point from `seed.md`.** The cultivate skill currently
-  audits a live repo but doesn't explicitly document consuming a `seed.md`.
-  The handoff needs to be specified.
-- **README drift.** Root README lists only `cultivate` and references an old
-  Codex-specific installer; needs rewriting for the `skills` CLI path and to
-  list `plot`.
 - **Eventual additional skills.** Is there a third skill (e.g. `harvest` to
   convert a proven agent-ready repo into a template)? Out of scope for v1 but
   worth noting so naming stays in the agricultural metaphor.
+
+## Resolved Since Plot
+
+- Plot output filename drift -- plot now produces `seed.md` (commit 6d42dcd).
+- Cultivate entry point from `seed.md` -- documented and anchored in harness
+  engineering (commit 339f411).
+- README drift -- root README rewritten to list both skills and use the
+  `skills` CLI; `skills/README.md` follows in the same pass.
+- Release / versioning -- `version` frontmatter (semver) is now required by
+  the validator; each skill has a `CHANGELOG.md` seeded at 0.1.0.
