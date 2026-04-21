@@ -10,10 +10,13 @@ agent workflow.
 
 ## Useful Commands
 
-- Validate skill packaging: `python3 scripts/validate_skills.py`
-- Run validator unit tests: `python3 scripts/test_validate_skills.py`
+- Validate skill packaging: `uv run python scripts/validate_skills.py` (or `python3 scripts/validate_skills.py`)
+- Run validator unit tests: `uv run python -m unittest scripts.test_validate_skills` (or `python3 -m unittest scripts.test_validate_skills`)
+- Sync the locked environment: `uv sync`
 - Install a skill from GitHub:
   `python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py --repo s33dunda/skills --path skills/<skill-name>`
+
+The repo is stdlib-only Python; `uv.lock` + `pyproject.toml` declare the runner so agents never fall back to a global interpreter. `python3` is still acceptable for one-off validator calls.
 
 ## Repository Map
 
@@ -21,6 +24,8 @@ agent workflow.
 - `skills/README.md`: index of available skills.
 - `scripts/validate_skills.py`: repo-level validation for skill structure and bundled Python scripts.
 - `scripts/test_validate_skills.py`: stdlib unittest fixtures for the validator (frontmatter allowlist, semver, metadata).
+- `pyproject.toml` / `uv.lock`: declared Python runner for isolated invocations.
+- `.github/pull_request_template.md` + `.github/ISSUE_TEMPLATE/`: PRs and issues must supply acceptance criteria and validation evidence.
 
 ## Execution Plans
 

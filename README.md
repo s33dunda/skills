@@ -10,7 +10,7 @@ plot  ->  seed.md  ->  cultivate  ->  {AGENTS, ARCHITECTURE, QUALITY, PLANS}.md 
 
 - **`plot`** captures the minimum viable idea as a structured brief (`seed.md`).
 - **`seed.md`** is the handoff artifact: project identity, scope, stack, success criteria, agent surface, open questions.
-- **`cultivate`** reads `seed.md` (or audits an existing repo) and emits the harness bundle: `AGENTS.md` at the root plus `docs/ARCHITECTURE.md`, `docs/QUALITY.md`, `docs/PLANS.md`, together with mechanical checks, CI feedback, and execution-plan conventions. Cultivate is applied harness engineering.
+- **`cultivate`** reads `seed.md` (or audits an existing repo) and emits the harness bundle: `AGENTS.md` at the root plus `docs/ARCHITECTURE.md`, `docs/QUALITY.md`, `docs/PLANS.md`, together with mechanical checks and execution-plan conventions. Cultivate is applied harness engineering.
 - **Farmers** are the agents that then work the repo. In *this* repo, farmers use Anthropic's [`skill-creator`](https://github.com/anthropics/skills) to iterate on the skills themselves.
 
 ## Install
@@ -43,7 +43,7 @@ Before publishing changes, validate the monorepo:
 python3 scripts/validate_skills.py
 ```
 
-This checks each installable skill for required frontmatter, eval metadata, and Python helper syntax. CI runs the skill eval suite on every PR and posts a sticky status comment.
+This checks each installable skill for required frontmatter, eval metadata, and Python helper syntax.
 
 ## Repository Layout
 
@@ -52,7 +52,7 @@ This checks each installable skill for required frontmatter, eval metadata, and 
 ├── AGENTS.md              # agent working norms for this repo
 ├── README.md              # this file
 ├── seed.md                # the seed for this repo, produced by plot
-├── scripts/               # monorepo-level tooling (validator, eval runner)
+├── scripts/               # monorepo-level tooling (validator)
 └── skills/
     ├── README.md          # skill index
     ├── plot/

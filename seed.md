@@ -1,7 +1,7 @@
 ---
 name: skills
 tagline: "A skill suite that turns an idea into an agent-ready repo via a repeatable plot -> cultivate workflow."
-stack: [Markdown, YAML, Python, GitHub Actions]
+stack: [Markdown, YAML, Python]
 status: draft
 ---
 
@@ -31,9 +31,8 @@ at end-users of agents; targeted at the people wiring agents into codebases.
 
 - `cultivate` skill -- consumes `seed.md` (or an existing repo) and prepares it
   for agents: AGENTS.md, knowledge map, execution-plan conventions,
-  architectural guardrails, CI/lint/test feedback exposure.
+  architectural guardrails, lint/test feedback exposure.
 - Installable for any supported agent via `npx skills add s33dunda/skills`.
-- Skill eval CI that runs on PRs and posts a sticky status comment.
 - Validator (`scripts/validate_skills.py`) enforces SKILL.md structure.
 
 **Out (explicitly):**
@@ -51,12 +50,10 @@ at end-users of agents; targeted at the people wiring agents into codebases.
 
 - **SKILL.md + YAML frontmatter** is the unit of distribution. Frontmatter uses
   folded block scalars so descriptions with colons parse cleanly.
-- **Python 3** powers repo-level tooling: `validate_skills.py`,
-  `run_skill_evals.py`, `format_eval_summary.py`.
-- **GitHub Actions** runs evals per PR and posts a sticky comment with results.
+- **Python 3** powers repo-level tooling: `validate_skills.py` and its unit
+  tests. `uv` is the declared runner for isolated invocations (`uv.lock` +
+  `pyproject.toml`); stdlib `python3` remains supported for validator calls.
 - **Distribution**: `vercel-labs/skills` CLI (`npx skills add s33dunda/skills`).
-- **Eval runner**: invokes the `claude` CLI in CI; gracefully degrades when the
-  binary is unavailable so the runner does not crash on misconfiguration.
 
 ## Agents
 
@@ -81,12 +78,9 @@ v1 is shipped when all of the following are observably true:
 
 - `npx -y skills@latest add s33dunda/skills` installs both skills into Augment
   and Claude Code without errors.
-- Skill eval CI runs on every PR, posts a sticky comment with per-eval
-  pass/fail, and stays green on `main`.
 - The workflow has been exercised end-to-end at least once on a real project:
   `plot` -> `seed.md` -> `cultivate` -> agent-driven PRs merged.
-- README clearly communicates the agricultural flow and both skills are listed
-  (currently only `cultivate` is listed -- drift to fix).
+- README clearly communicates the agricultural flow and both skills are listed.
 
 ## Constraints
 
@@ -94,14 +88,22 @@ v1 is shipped when all of the following are observably true:
 - Upstream dependency on the `vercel-labs/skills` CLI: frontmatter format,
   discovery rules, and search paths follow its conventions. Breaking changes
   upstream can break install.
-- Eval CI depends on the `claude` CLI binary being available in the GitHub
-  Actions runner; must degrade gracefully when it isn't.
+- No paid CI budget. Validator and validator-unit-tests run locally only;
+  model-backed skill evals are deferred (see `Deferred` below).
 
 ## Open Questions
 
 - **Eventual additional skills.** Is there a third skill (e.g. `harvest` to
   convert a proven agent-ready repo into a template)? Out of scope for v1 but
   worth noting so naming stays in the agricultural metaphor.
+
+## Deferred
+
+- **Skill eval CI.** Originally in scope; removed because model-backed evals
+  require an `ANTHROPIC_API_KEY` budget the solo maintainer cannot currently
+  justify. Prompts remain in each skill's `evals/evals.json` for local /
+  manual runs; the runner and Actions workflow have been removed from the
+  repo. Reinstate when there is a CI budget or a free equivalent path.
 
 ## Resolved Since Plot
 
@@ -112,3 +114,10 @@ v1 is shipped when all of the following are observably true:
   `skills` CLI; `skills/README.md` follows in the same pass.
 - Release / versioning -- `version` frontmatter (semver) is now required by
   the validator; each skill has a `CHANGELOG.md` seeded at 0.1.0.
+- ExecPlan workflow installed -- `docs/PLANS.md` convention + 12-section
+  `docs/plans/_template.md` mirror cultivate's canonical template.
+- Environment isolation -- `pyproject.toml` + `uv.lock` declare the repo's
+  runner; agents no longer depend on a global `python3`.
+- PR/issue templates -- `.github/pull_request_template.md` and
+  `.github/ISSUE_TEMPLATE/` ask contributors for acceptance criteria and
+  validation evidence.

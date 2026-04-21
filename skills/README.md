@@ -30,4 +30,4 @@ From the repo root, run:
 python3 scripts/validate_skills.py
 ```
 
-The validator checks frontmatter (`name`, `description`, `version`), eval metadata, and Python helper syntax. CI runs the skill eval suite on every PR.
+The validator checks frontmatter (`name`, `description`, `version`), eval metadata, and Python helper syntax.
