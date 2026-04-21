@@ -4,6 +4,36 @@ All notable changes to the `cultivate` skill are documented in this file. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 skill uses [Semantic Versioning](https://semver.org/).
 
+## [0.2.2] - 2026-04-21
+
+### Added
+
+- Full-text mirror of the primary harness-engineering source at
+  `references/harness-openai-blog.md` (Lopopolo, OpenAI, Feb 2026),
+  plus the five diagrams from the post (`image.png`, `image-1.png`,
+  `image-2.png`, `image-3.png`, `image-4.png`). `harness-engineering.md`
+  now points to the local mirror alongside the live URL so an agent
+  grounding an AGENTS.md or docs-tree decision can read the primary
+  source directly instead of fetching. The distilled
+  `harness-engineering.md` stays the routing document; the mirror is
+  the deepest ground truth when the distillation is not enough.
+
+### Changed
+
+- **Provenance split in `references/harness-engineering.md`.** The
+  single flat `## Key Principles` list co-listed Lopopolo's primary-
+  source doctrine with operational patterns from the wider AGENTS.md
+  ecosystem (Crosley 2026, Codex best-practices, `agents.md` open
+  standard). A careless reader could mistake the ecosystem patterns
+  (`Definition of Done`, three-tier action boundaries, nested
+  `AGENTS.md` / `AGENTS.override.md`, command-first instructions,
+  escalation-rule shapes) for Lopopolo's. Split into two subsections:
+  `Key Principles (Primary Source: Lopopolo)` holds the 14 principles
+  that map directly to the blog post; `Key Principles (AGENTS.md
+  Ecosystem)` holds the 5 operational patterns that are compatible
+  with Lopopolo's doctrine but not prescribed by it. No content
+  removed or altered -- reorganization only.
+
 ## [0.2.1] - 2026-04-21
 
 ### Fixed

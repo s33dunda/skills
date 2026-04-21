@@ -6,7 +6,7 @@ Cultivate is an applied form of harness engineering. This reference distills the
 
 Primary:
 
-- Ryan Lopopolo, "Harness engineering: leveraging Codex in an agent-first world," OpenAI, February 11, 2026. <https://openai.com/index/harness-engineering/>
+- Ryan Lopopolo, "Harness engineering: leveraging Codex in an agent-first world," OpenAI, February 11, 2026. <https://openai.com/index/harness-engineering/>. Full-text mirror checked into this skill: `references/harness-openai-blog.md` -- read it directly when grounding an AGENTS.md / docs-tree decision rather than fetching the live page.
 - Aaron Friel, "Using PLANS.md for multi-hour problem solving," OpenAI Cookbook, October 7, 2025. <https://cookbook.openai.com/articles/codex_exec_plans>
 - Derrick Choi, "Modernizing your Codebase with Codex," OpenAI Cookbook, November 19, 2025. <https://cookbook.openai.com/examples/codex/code_modernization>
 - "Best practices -- Codex," OpenAI Developers (current). <https://developers.openai.com/codex/learn/best-practices>
@@ -30,7 +30,9 @@ Prior art:
 
 When a team's primary job is no longer to write code but to design the environment agents work inside, the engineering effort moves from code to scaffolding, tooling, abstractions, and feedback loops. The scarce resource becomes human time and attention, so the harness must keep agents productive without copy-pasting human context into prompts.
 
-## Key Principles
+## Key Principles (Primary Source: Lopopolo)
+
+Every principle in this subsection maps directly to Ryan Lopopolo's OpenAI blog post (Feb 2026). Read `references/harness-openai-blog.md` for the verbatim text. These are the load-bearing doctrine; when a decision needs grounding, start here.
 
 ### Give agents a map, not a manual
 
@@ -84,6 +86,14 @@ Agent-generated code replicates local patterns, including the weak ones. Encode 
 
 When review feedback repeats, that is a signal the harness is missing a rule, template, test, or feedback loop. Promote the taste into code or lint; let it apply everywhere at once forever.
 
+### Semantic linting -- errors that teach
+
+Mechanical checks should not only fire; they should include the remediation inline. A custom lint message like "imports from `src/web/` into `src/core/` are forbidden (layering violation); move shared helpers to `src/core/shared/` or invert the dependency" turns every violation into context for the next agent run. Unhelpful errors waste turns; teaching errors compound into agent capability.
+
+## Key Principles (AGENTS.md Ecosystem)
+
+These operational patterns are absent from the Lopopolo primary source but widely adopted in the broader AGENTS.md ecosystem (Codex best-practices, the `agents.md` open standard, field analysis by Crosley, 2026). They are compatible with Lopopolo's doctrine -- they operationalize "enforce invariants mechanically" and "progressive disclosure" in specific ways -- but they are not prescribed by it. Use them as defaults, not as primary canon.
+
 ### Instructions are command-first, not prose-first
 
 The most reliable instruction-file patterns (Crosley, 2026; GitHub analysis of 2,500+ AGENTS.md repos) are operational rather than literary. Every rule the harness wants an agent to follow should map to an exact shell invocation whose exit code is the check. "Run the tests" is a suggestion; `` `uv run pytest -v` exits 0 `` is a rule. Style guides without an enforcement command reliably get ignored.
@@ -95,10 +105,6 @@ The most reliable instruction-file patterns (Crosley, 2026; GitHub analysis of 2
 ### Three-tier action boundaries
 
 Productive harnesses partition actions into `Always` (safe, auto-run), `Ask` (requires human approval or narrow scoping), and `Never` (refused outright). Missing tiers produce either paralysis (nothing can run without asking) or drift (agents improvise destructive recoveries when blocked -- deleting lockfiles, bypassing checks, silently skipping tests). The `Never` list is as load-bearing as the `Always` list.
-
-### Semantic linting -- errors that teach
-
-Mechanical checks should not only fire; they should include the remediation inline. A custom lint message like "imports from `src/web/` into `src/core/` are forbidden (layering violation); move shared helpers to `src/core/shared/` or invert the dependency" turns every violation into context for the next agent run. Unhelpful errors waste turns; teaching errors compound into agent capability.
 
 ### Escalation rules prevent improvisation
 
