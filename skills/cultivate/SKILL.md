@@ -20,7 +20,7 @@ Use this skill to help an agent improve a repository as a working environment fo
 
 Cultivate is an applied form of harness engineering: humans steer, agents execute, the repository is the system of record. From an agent's perspective, anything it cannot access in the repository effectively does not exist. Cultivate's job is to make the things that matter -- intent, architecture, conventions, verification -- first-class, versioned, and mechanically enforceable without drowning the agent in prose.
 
-Read `references/harness-engineering.md` for the full conceptual foundation when a decision needs that grounding. Read `references/cultivate-principles.md` for the operational shortlist when picking what to change.
+Read `references/harness-openai-blog.md` before changing the default documentation or directory structure. It is the concrete source for the harness layout this skill should install: short `AGENTS.md`, root `ARCHITECTURE.md`, and a structured `docs/` knowledge store with design docs, product specs, execution plans, generated docs, references, and focused system docs. Read `references/harness-engineering.md` for the full conceptual foundation when a decision needs that grounding. Read `references/cultivate-principles.md` for the operational shortlist when picking what to change.
 
 ## Non-Interactivity Contract
 
@@ -91,7 +91,8 @@ Prefer the smallest change that makes the next agent more capable.
 Good first improvements are usually:
 
 - A short root `AGENTS.md` that acts as a map, not an encyclopedia.
-- A repo-local docs index under `docs/` that points to deeper sources of truth (use a nested namespace like `docs/agents/` only when `docs/` is already owned by a published site).
+- The harness knowledge-store skeleton from `references/harness-openai-blog.md`: root `ARCHITECTURE.md`, `docs/PLANS.md`, `docs/QUALITY.md`, `docs/RELIABILITY.md`, `docs/SECURITY.md`, plus `docs/design-docs/`, `docs/product-specs/`, `docs/exec-plans/`, `docs/generated/`, and `docs/references/`.
+- README/index placeholders inside knowledge-store directories that do not yet have project-specific content. Empty directories disappear from git and teach agents nothing; a short README should say when to use the directory and what belongs there.
 - A planning template for complex work, with decision and progress logs.
 - A mechanical check for one recurring invariant rather than more prose about the invariant.
 - A clear test/verification section that names exact commands and expected signals.
@@ -99,14 +100,22 @@ Good first improvements are usually:
 
 When the user asks to implement cultivate improvements, choose one focused slice unless they explicitly ask for a broad overhaul. Explain why that slice increases agent leverage.
 
-If a `seed.md` exists, let its **Agents** and **Success** fields narrow the slice. A repo whose agents will "run evals and open cleanup PRs" needs different scaffolding than a repo whose agents will "review PRs and respond to bug reports" -- do not build the generic harness when the seed tells you the specific one.
+If a `seed.md` exists, let its **Agents** and **Success** fields narrow the slice. A repo whose agents will "run evals and open cleanup PRs" needs different scaffolding than a repo whose agents will "review PRs and respond to bug reports" -- do not build generic prose when the seed tells you the specific one. The directory skeleton is still useful even for small repos because it gives future context a stable home; scale the content down, not the map away.
 
 ## What To Encode Where
 
 Use this division of responsibility:
 
 - `AGENTS.md`: short entrypoint. Include project map, high-value commands, important conventions, and links to deeper docs. Keep it scannable. (Detailed shape rules below.)
-- `docs/`: durable repository knowledge such as architecture, product constraints, quality standards, troubleshooting, and execution-plan conventions. Humans and agents read the same files -- do not split into a separate `docs/agents/` unless `docs/` is already owned by a published site.
+- `ARCHITECTURE.md`: root architecture map. Put top-level system purpose, layers, flows, boundaries, extension points, and mechanical architecture checks here so it is easy to discover from `AGENTS.md`.
+- `docs/`: the repository knowledge store, not a catch-all dumping ground. Prefer this layout unless the repo already has a strong conflicting convention:
+  - `docs/design-docs/` -- design history, core beliefs, accepted/rejected approaches, verification status.
+  - `docs/product-specs/` -- user-facing behavior, workflows, acceptance criteria, product decisions.
+  - `docs/exec-plans/active/` and `docs/exec-plans/completed/` -- living plans and completed execution records; include `docs/exec-plans/tech-debt-tracker.md`.
+  - `docs/generated/` -- generated schemas, command inventories, API summaries, or other regenerated facts.
+  - `docs/references/` -- external docs or LLM-readable reference snapshots such as `uv-llms.txt`.
+  - `docs/PLANS.md`, `docs/QUALITY.md`, `docs/RELIABILITY.md`, `docs/SECURITY.md` -- cross-cutting operating docs.
+  - Add `docs/DESIGN.md`, `docs/FRONTEND.md`, and `docs/PRODUCT_SENSE.md` when the repo has UI, design, or product-shaping work.
 - Scripts, tests, linters, schemas, CI: rules that should be enforced repeatedly or are easy to forget. Custom lint messages should include remediation text so violations teach the next agent.
 - Issue/PR templates: human-facing prompts that capture acceptance criteria, validation evidence, screenshots, logs, and rollout notes.
 - Generated docs: only for facts that can be regenerated or validated, such as schema summaries or command inventories.
@@ -130,9 +139,9 @@ Anti-patterns to strip out: prose paragraphs without commands, ambiguous directi
 
 ## ExecPlans (PLANS.md)
 
-For multi-hour, multi-milestone, or high-unknown work, cultivate installs an ExecPlan workflow. The pattern comes from the OpenAI cookbook ("Using PLANS.md for multi-hour problem solving") and has shaped Codex sessions that run for seven-plus hours from a single prompt.
+For multi-hour, multi-milestone, or high-unknown work, cultivate installs an ExecPlan workflow. The pattern comes from the OpenAI cookbook ("Using PLANS.md for multi-hour problem solving") and the harness blog's `docs/exec-plans/` layout.
 
-- Place the template at `docs/PLANS.md` (default) or `.agent/PLANS.md` (cookbook convention); either is fine. Reference it from `AGENTS.md` so agents know when and how to use it.
+- Place the convention/index at `docs/PLANS.md`, active plans under `docs/exec-plans/active/`, completed plans under `docs/exec-plans/completed/`, and long-lived debt in `docs/exec-plans/tech-debt-tracker.md`. Reference these from `AGENTS.md` so agents know when and how to use them.
 - An ExecPlan is a _living document_. Mandatory sections: `Purpose / Big Picture`, `Progress`, `Surprises & Discoveries`, `Decision Log`, `Outcomes & Retrospective`, plus `Context and Orientation`, `Plan of Work`, `Concrete Steps`, `Validation and Acceptance`, `Idempotence and Recovery`, `Artifacts and Notes`, and `Interfaces and Dependencies`.
 - Every ExecPlan must be self-contained: a novice agent with no prior context should be able to read the plan plus the working tree and produce a working, observable result.
 - Acceptance is phrased as observable behavior ("after starting the server, `curl localhost:8080/health` returns `200 OK`"), not internal attributes.
@@ -160,6 +169,7 @@ Use prose to teach intent. Use tooling to apply repeated rules.
 Load only what is needed:
 
 - Read `references/harness-engineering.md` when you need the full conceptual foundation (the source canon cultivate applies).
+- Read `references/harness-openai-blog.md` when choosing the default knowledge-store directory structure or explaining why `AGENTS.md` should point into `docs/` instead of holding everything itself.
 - Read `references/cultivate-principles.md` when you need the operational checklist.
 - Read `references/templates.md` when drafting `AGENTS.md`, cultivate docs, quality docs, execution-plan guidance, or audit reports.
 - Run `scripts/audit_cultivate.py` when you need a quick read-only baseline.

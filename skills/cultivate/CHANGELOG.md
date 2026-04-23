@@ -4,6 +4,21 @@ All notable changes to the `cultivate` skill are documented in this file. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 skill uses [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Align default cultivate output with the OpenAI harness blog knowledge-store
+  layout: short map-style `AGENTS.md`, root `ARCHITECTURE.md`, and structured
+  `docs/` directories for design docs, product specs, execution plans,
+  generated docs, references, quality, reliability, and security.
+- Update templates so empty harness directories get README/index placeholders
+  that tell agents when to use them instead of disappearing from git.
+- Extend the audit scanner to flag missing root architecture docs, harness
+  directories, operating docs, and placeholder files.
+- Strengthen cultivate evals so future changes preserve the canonical harness
+  map instead of shrinking to a minimal `docs/agents/` bundle.
+
 ## [0.2.2] - 2026-04-21
 
 ### Added

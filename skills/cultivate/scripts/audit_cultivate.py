@@ -58,6 +58,15 @@ def exists_any(root: Path, candidates: Iterable[str]) -> list[str]:
     return found
 
 
+def exists_all(root: Path, candidates: Iterable[str]) -> list[str]:
+    """Return candidates that exist, preserving order.
+
+    The caller can compare length with the input list when it needs to know
+    whether a whole harness bundle is present.
+    """
+    return [candidate for candidate in candidates if (root / candidate).exists()]
+
+
 def walk_files(root: Path, max_files: int = 4000) -> list[Path]:
     files: list[Path] = []
     for dirpath, dirnames, filenames in os.walk(root):
@@ -99,6 +108,16 @@ def find_files_containing(root: Path, patterns: list[re.Pattern[str]], files: li
 
 def signal(name: str, evidence: list[str], recommendation: str) -> Signal:
     return Signal(name=name, status="present" if evidence else "missing", evidence=evidence, recommendation=recommendation)
+
+
+def bundle_signal(name: str, root: Path, required: list[str], recommendation: str) -> Signal:
+    present = exists_all(root, required)
+    missing = [item for item in required if item not in present]
+    evidence = [f"{item} present" for item in present]
+    status = "present" if not missing else "missing"
+    if missing:
+        evidence.append("Missing: " + ", ".join(missing))
+    return Signal(name=name, status=status, evidence=evidence, recommendation=recommendation)
 
 
 def environment_evidence(root: Path) -> list[str]:
@@ -187,10 +206,42 @@ def analyze(root: Path) -> dict:
     plan_patterns = [re.compile(r"exec\s*plan|execution plan|decision log|progress", re.IGNORECASE)]
     guardrail_patterns = [re.compile(r"guardrail|validator|frontmatter|installability|lint|typecheck|mypy|ruff|eslint|schema|dependency rule|import rule", re.IGNORECASE)]
 
+    harness_dirs = [
+        "docs/design-docs",
+        "docs/product-specs",
+        "docs/exec-plans",
+        "docs/exec-plans/active",
+        "docs/exec-plans/completed",
+        "docs/generated",
+        "docs/references",
+    ]
+    harness_docs = [
+        "ARCHITECTURE.md",
+        "docs/PLANS.md",
+        "docs/QUALITY.md",
+        "docs/RELIABILITY.md",
+        "docs/SECURITY.md",
+    ]
+    placeholder_docs = [
+        "docs/design-docs/README.md",
+        "docs/product-specs/README.md",
+        "docs/exec-plans/active/README.md",
+        "docs/exec-plans/completed/README.md",
+        "docs/generated/README.md",
+        "docs/references/README.md",
+        "docs/design-docs/index.md",
+        "docs/product-specs/index.md",
+        "docs/exec-plans/tech-debt-tracker.md",
+    ]
+
     signals = [
         signal("agent entrypoint", exists_any(root, ["AGENTS.md", "AGENT.md", ".github/copilot-instructions.md"]), "Add a short root AGENTS.md that maps commands, docs, and repo norms for agents."),
         signal("human orientation", exists_any(root, ["README.md", "README.rst", "README.txt"]), "Add or update README with setup and project purpose; keep agent-only details in AGENTS.md."),
         signal("repository knowledge base", docs[:12], "Create a docs/ map for architecture, quality, plans, and operational truth."),
+        signal("root architecture map", exists_any(root, ["ARCHITECTURE.md"]), "Add root ARCHITECTURE.md as the high-discoverability architecture map referenced from AGENTS.md."),
+        bundle_signal("harness knowledge-store directories", root, harness_dirs, "Create docs/design-docs, docs/product-specs, docs/exec-plans/{active,completed}, docs/generated, and docs/references with README/index placeholders."),
+        bundle_signal("harness operating docs", root, harness_docs, "Add root ARCHITECTURE.md plus docs/PLANS.md, docs/QUALITY.md, docs/RELIABILITY.md, and docs/SECURITY.md."),
+        bundle_signal("knowledge-store placeholders", root, placeholder_docs, "Add README.md/index placeholders so empty harness directories survive git and explain when agents should use them."),
         signal("architecture guidance", find_files_containing(root, architecture_patterns, guidance_files)[:12], "Document architecture boundaries and promote repeated boundary rules into checks."),
         signal("execution-plan workflow", find_files_containing(root, plan_patterns, guidance_files)[:12], "Add a lightweight plan template for complex or multi-session work."),
         signal("mechanical validation commands", (package_commands(root) + documentation_validation_commands(root, guidance_files))[:12], "Expose exact test/lint/type/build/smoke-check commands in AGENTS.md and CI."),
@@ -207,7 +258,15 @@ def analyze(root: Path) -> dict:
     present = {item.name for item in signals if item.status == "present"}
     categories = {
         "orientation": ["agent entrypoint", "human orientation", "environment isolation"],
-        "knowledge_system": ["repository knowledge base", "architecture guidance", "execution-plan workflow"],
+        "knowledge_system": [
+            "repository knowledge base",
+            "root architecture map",
+            "harness knowledge-store directories",
+            "harness operating docs",
+            "knowledge-store placeholders",
+            "architecture guidance",
+            "execution-plan workflow",
+        ],
         "enforceable_rules": ["mechanical validation commands", "CI workflows", "guardrail references"],
         "validation_feedback": ["test suite", "observability/debugging guidance", "agent-usable scripts"],
         "autonomy_workflow": ["execution-plan workflow", "PR/issue workflow"],

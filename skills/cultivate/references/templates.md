@@ -2,6 +2,45 @@
 
 Use these templates as starting points. Keep them small and adapt them to the repository after inspection.
 
+## Harness Knowledge Store Layout
+
+This layout comes from `references/harness-openai-blog.md`. Install it by default unless the repository already has an explicit, better-localized convention. Scale content down for small repos, but keep the map stable so future agents know where to put new knowledge.
+
+```text
+AGENTS.md
+ARCHITECTURE.md
+docs/
+├── design-docs/
+│   ├── README.md
+│   ├── index.md
+│   └── core-beliefs.md
+├── exec-plans/
+│   ├── active/
+│   │   └── README.md
+│   ├── completed/
+│   │   └── README.md
+│   └── tech-debt-tracker.md
+├── generated/
+│   └── README.md
+├── product-specs/
+│   ├── README.md
+│   └── index.md
+├── references/
+│   └── README.md
+├── PLANS.md
+├── QUALITY.md
+├── RELIABILITY.md
+└── SECURITY.md
+```
+
+Optional, install when relevant:
+
+- `docs/DESIGN.md` for visual/product design principles.
+- `docs/FRONTEND.md` for UI implementation rules, routes, screenshots, accessibility, and browser-driven validation.
+- `docs/PRODUCT_SENSE.md` for product taste, target users, and prioritization heuristics.
+
+For directories with no real content yet, add a short `README.md` explaining when to create files there. Do not leave empty directories; git will drop them and agents will miss the intended home for future context.
+
 ## Root `AGENTS.md`
 
 Keep each section under ~50 lines and the total file under ~150. Codex enforces a default 32 KiB limit (`project_doc_max_bytes`); long files get truncated. Front-load commands and closure; push style preferences to referenced docs.
@@ -31,9 +70,14 @@ This repository contains [brief purpose]. Start with `README.md` for human setup
 
 ## Deeper Context
 
-- Architecture: `docs/ARCHITECTURE.md`
+- Architecture: `ARCHITECTURE.md`
+- Product specs: `docs/product-specs/index.md`
+- Design docs: `docs/design-docs/index.md`
 - Quality and verification: `docs/QUALITY.md`
 - Complex work plans: `docs/PLANS.md`
+- Active ExecPlans: `docs/exec-plans/active/`
+- Tech debt: `docs/exec-plans/tech-debt-tracker.md`
+- External references: `docs/references/`
 
 ## When Writing Code
 
@@ -89,7 +133,7 @@ In a monorepo, nest per service or package. Tools concatenate from repo root to 
 
 `AGENTS.md` is the open standard read natively by Codex, Copilot, Cursor, Windsurf, Amp, and Devin. If a team also uses `CLAUDE.md` (Claude Code) or `.cursor/rules`, treat `AGENTS.md` as canonical and mirror to the others -- do not maintain parallel instruction sets that drift.
 
-## `docs/ARCHITECTURE.md`
+## Root `ARCHITECTURE.md`
 
 ```md
 # Architecture Map
@@ -113,6 +157,77 @@ Describe where new behavior should be added and which existing helpers or patter
 ## Mechanical Enforcement
 
 List checks that enforce this architecture. If none exist, say which rule should be promoted into tooling first.
+```
+
+## `docs/design-docs/README.md`
+
+```md
+# Design Docs
+
+Use this directory for durable design reasoning: core beliefs, accepted and rejected approaches, verification notes, and decision history that agents should preserve across PRs.
+
+Create a new document here when a design choice affects more than one file, changes how future agents should think, or records a tradeoff that would otherwise live only in chat. Link each document from `index.md`.
+```
+
+## `docs/design-docs/index.md`
+
+```md
+# Design Docs Index
+
+| Doc | Status | Last Verified | Why It Matters |
+| --- | --- | --- | --- |
+| `core-beliefs.md` | draft | YYYY-MM-DD | Agent-first principles and repository taste. |
+```
+
+## `docs/design-docs/core-beliefs.md`
+
+```md
+# Core Beliefs
+
+- The repository is the system of record; facts that matter to future agents belong in versioned files.
+- `AGENTS.md` is a map, not a manual.
+- Repeated rules should become tests, linters, schemas, or scripts with remediation-aware messages.
+- Small, reversible changes beat large undocumented rewrites.
+```
+
+## `docs/product-specs/README.md`
+
+```md
+# Product Specs
+
+Use this directory for user-facing behavior, workflows, acceptance criteria, and product decisions. Product specs answer "what should happen for the user?" while `ARCHITECTURE.md` answers "where does it live in the system?"
+
+Add or update a spec when behavior changes, a new user journey is introduced, or an old assumption becomes wrong. Link specs from `index.md`.
+```
+
+## `docs/product-specs/index.md`
+
+```md
+# Product Specs Index
+
+| Spec | Status | Owner | Verification |
+| --- | --- | --- | --- |
+| TBD | TBD | TBD | TBD |
+```
+
+## `docs/generated/README.md`
+
+```md
+# Generated Docs
+
+Use this directory for facts generated from code, schemas, APIs, command inventories, or external systems. Every generated file should say how to regenerate it and what command verifies freshness.
+
+Do not hand-edit generated artifacts unless the file explicitly says it is safe.
+```
+
+## `docs/references/README.md`
+
+```md
+# References
+
+Use this directory for external references that agents need locally: LLM-readable upstream docs, protocol notes, design-system references, deployment docs, or vendor constraints.
+
+Prefer small, task-relevant excerpts or generated `*-llms.txt` snapshots over huge copied manuals. Record the source URL and retrieval date at the top of each reference when possible.
 ```
 
 ## `docs/QUALITY.md`
@@ -139,16 +254,52 @@ Document useful logs, metrics, traces, health endpoints, or debugging scripts.
 Track missing checks, flaky tests, stale generated files, and areas where agents need human judgment.
 ```
 
+## `docs/RELIABILITY.md`
+
+```md
+# Reliability
+
+## Critical Journeys
+
+List the user or system journeys that must remain reliable.
+
+## Failure Modes
+
+Document known failure modes, retries, rate limits, backoff behavior, and recovery commands.
+
+## Validation
+
+Name exact commands, health checks, logs, metrics, or traces agents can use to prove reliability.
+```
+
+## `docs/SECURITY.md`
+
+```md
+# Security
+
+## Secrets And Credentials
+
+Document where secrets come from, which files must never contain them, and the command or check that helps catch leaks.
+
+## Trust Boundaries
+
+Name external systems, user-controlled inputs, auth scopes, and dangerous operations.
+
+## Safe Change Rules
+
+List actions that require explicit human approval, feature flags, or additional review.
+```
+
 ## `docs/PLANS.md`
 
-Use an ExecPlan for multi-hour, multi-milestone, or cross-cutting work. Small changes get an ephemeral plan or no plan. The skeleton below is the one-file-per-plan canonical shape from the OpenAI cookbook. Copy it into `docs/plans/<slug>.md` (or `.agent/plans/<slug>.md`) for each new effort; `docs/PLANS.md` itself is the index and convention doc.
+Use an ExecPlan for multi-hour, multi-milestone, or cross-cutting work. Small changes get an ephemeral plan or no plan. The skeleton below is the one-file-per-plan canonical shape from the OpenAI cookbook. Copy it into `docs/exec-plans/active/<slug>.md` for each new effort; move it to `docs/exec-plans/completed/<slug>.md` when complete. `docs/PLANS.md` itself is the index and convention doc.
 
 `docs/PLANS.md` (convention doc):
 
 ```md
 # Execution Plans
 
-Complex work (multi-milestone, cross-cutting, or expected to span more than one agent session) runs against an ExecPlan checked into this repo under `docs/plans/<slug>.md`.
+Complex work (multi-milestone, cross-cutting, or expected to span more than one agent session) runs against an ExecPlan checked into this repo under `docs/exec-plans/active/<slug>.md`.
 
 ## When to write one
 
@@ -161,19 +312,25 @@ Small, single-file changes do not need an ExecPlan.
 
 ## How to write one
 
-Copy `docs/plans/_template.md` to `docs/plans/<slug>.md`. Keep the plan current as work proceeds:
+Copy the template below to `docs/exec-plans/active/<slug>.md`. Keep the plan current as work proceeds:
 
 - Update `Progress` at every stopping point.
 - Record decisions in the `Decision Log` as they are made, not after the fact.
 - Record unexpected findings in `Surprises & Discoveries`.
 - Close each major milestone with an `Outcomes & Retrospective` entry.
 
+## Plan lifecycle
+
+- New plans live in `docs/exec-plans/active/`.
+- Completed plans move to `docs/exec-plans/completed/`.
+- Long-lived cleanup and recurring drift are tracked in `docs/exec-plans/tech-debt-tracker.md`.
+
 ## Non-interactivity
 
 Do not prompt the operator for "next steps" mid-plan. Resolve ambiguity autonomously, record the choice in the `Decision Log`, and continue to the next milestone.
 ```
 
-`docs/plans/_template.md` (per-effort ExecPlan skeleton):
+Per-effort ExecPlan skeleton:
 
 ```md
 # ExecPlan: <short descriptive title>
