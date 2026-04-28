@@ -9,7 +9,7 @@ description: >-
   harness engineering -- it is the bridge between a seeded idea (or an existing repo) and
   an environment where AI agents can execute reliably.
 metadata:
-  version: "0.2.2"
+  version: "0.2.3"
 ---
 
 # Cultivate Repo

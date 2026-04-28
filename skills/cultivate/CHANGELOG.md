@@ -4,7 +4,7 @@ All notable changes to the `cultivate` skill are documented in this file. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 skill uses [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## [0.2.3] - 2026-04-28
 
 ### Changed
 

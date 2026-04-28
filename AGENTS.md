@@ -24,6 +24,9 @@ The repo is stdlib-only Python; `uv.lock` + `pyproject.toml` declare the runner 
 - `scripts/validate_skills.py`: frontmatter / metadata / Python-syntax gate for every skill.
 - `scripts/test_validate_skills.py`: stdlib unittest fixtures for the validator.
 - `docs/PLANS.md` + `docs/plans/_template.md`: ExecPlan convention and skeleton.
+- `docs/exec-plans/active/`: active ExecPlans. `docs/exec-plans/completed/`: closed plans.
+- `docs/exec-plans/tech-debt-tracker.md`: long-lived cleanup items.
+- `ARCHITECTURE.md`: system purpose, flows, boundaries, enforcement.
 - `.github/pull_request_template.md` + `.github/ISSUE_TEMPLATE/`: PRs and issues must supply acceptance criteria and validation evidence.
 - `seed.md`: project identity, scope, success criteria, deferrals.
 
@@ -36,7 +39,7 @@ The repo is stdlib-only Python; `uv.lock` + `pyproject.toml` declare the runner 
 
 ## Execution Plans
 
-Open an ExecPlan under `docs/plans/<slug>.md` when work (a) touches more than one skill, (b) changes `SKILL.md` plus its references plus its evals in the same effort, or (c) will span multiple agent sessions. Convention: `docs/PLANS.md`. Template: `docs/plans/_template.md`. Resolve ambiguity autonomously; record decisions in the plan's `Decision Log` rather than pausing to ask. Single-file changes do not need a plan.
+Open an ExecPlan at `docs/exec-plans/active/<slug>.md` when work (a) touches more than one skill, (b) changes `SKILL.md` plus its references plus its evals in the same effort, or (c) will span multiple agent sessions. Convention: `docs/PLANS.md`. Template: `docs/plans/_template.md`. Move to `docs/exec-plans/completed/` when done. Resolve ambiguity autonomously; record decisions in the plan's `Decision Log`. Single-file changes do not need a plan.
 
 ## When Writing or Editing a Skill
 
