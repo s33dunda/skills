@@ -10,7 +10,7 @@ from pathlib import Path
 from textwrap import dedent
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from validate_skills import validate_skill  # noqa: E402
+from validate_skills import relative_files, validate_skill  # noqa: E402
 
 
 def _write_skill(root: Path, name: str, frontmatter: str, body: str = "") -> Path:
@@ -136,6 +136,30 @@ class ValidateSkillTests(unittest.TestCase):
         self.assertTrue(
             any("metadata has unexpected key" in p for p in problems),
             problems,
+        )
+
+    def test_relative_files_ignores_python_cache_artifacts(self) -> None:
+        skill = _write_skill(
+            self.root,
+            "cachey",
+            dedent(
+                """\
+                name: cachey
+                description: Has generated cache files.
+                metadata:
+                  version: "1.0.0"
+                """
+            ),
+        )
+        pycache = skill / "scripts" / "__pycache__"
+        pycache.mkdir(parents=True)
+        (pycache / "tool.cpython-314.pyc").write_bytes(b"cache")
+        (skill / "scripts").mkdir(exist_ok=True)
+        (skill / "scripts" / "tool.py").write_text("print('ok')\n", encoding="utf-8")
+
+        self.assertEqual(
+            {path.as_posix() for path in relative_files(skill)},
+            {"SKILL.md", "scripts/tool.py"},
         )
 
 

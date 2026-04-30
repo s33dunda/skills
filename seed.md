@@ -84,7 +84,7 @@ v1 is shipped when all of the following are observably true:
 
 ## Constraints
 
-- Solo maintainer (s33dunda).
+- Solo maintainer.
 - Upstream dependency on the `vercel-labs/skills` CLI: frontmatter format,
   discovery rules, and search paths follow its conventions. Breaking changes
   upstream can break install.

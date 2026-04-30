@@ -28,6 +28,19 @@ npx -y skills@latest add s33dunda/skills/skills/plot
 npx -y skills@latest add s33dunda/skills/skills/cultivate
 ```
 
+Fresh checkouts also include a repo-local `.agents/skills/` mirror. Agent
+clients that know how to scan `.agents/` can load `plot` and `cultivate`
+without a separate install step. This repo does not validate or manage local
+user-state installs such as `~/.codex/skills` or `.claude`; use the `npx
+skills` commands above for those hosts when needed.
+
+When a canonical skill changes, refresh the committed `.agents/skills/` mirror
+from `skills/` with:
+
+```bash
+uv run python scripts/sync_agents_skills.py
+```
+
 ## Skills
 
 | Skill | Path | Purpose |
@@ -40,10 +53,12 @@ npx -y skills@latest add s33dunda/skills/skills/cultivate
 Before publishing changes, validate the monorepo:
 
 ```bash
-python3 scripts/validate_skills.py
+uv run python scripts/validate_skills.py
 ```
 
-This checks each installable skill for required frontmatter, eval metadata, and Python helper syntax.
+This checks each installable skill for required frontmatter, eval metadata,
+Python helper syntax, and committed `.agents/skills/` mirror drift. It does not
+inspect `~/.codex/skills`, `.claude`, or other local agent install locations.
 
 ## Repository Layout
 
@@ -51,6 +66,7 @@ This checks each installable skill for required frontmatter, eval metadata, and 
 .
 ├── AGENTS.md              # agent working norms for this repo
 ├── README.md              # this file
+├── .agents/               # repo-local agent-client mirror of the skills
 ├── seed.md                # the seed for this repo, produced by plot
 ├── scripts/               # monorepo-level tooling (validator)
 └── skills/

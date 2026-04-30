@@ -13,6 +13,9 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS_DIR = ROOT / "skills"
+AGENTS_SKILLS_DIR = ROOT / ".agents" / "skills"
+SYNC_IGNORE_DIRS = {"__pycache__"}
+SYNC_IGNORE_SUFFIXES = {".pyc", ".pyo"}
 
 
 def error(message: str) -> str:
@@ -176,12 +179,73 @@ def validate_skill(skill_dir: Path) -> list[str]:
     return problems
 
 
+def skill_dirs_in(directory: Path) -> list[Path]:
+    return sorted(path for path in directory.iterdir() if path.is_dir())
+
+
+def relative_files(directory: Path) -> set[Path]:
+    files: set[Path] = set()
+    for path in directory.rglob("*"):
+        if not path.is_file():
+            continue
+        if any(part in SYNC_IGNORE_DIRS for part in path.relative_to(directory).parts):
+            continue
+        if path.suffix in SYNC_IGNORE_SUFFIXES:
+            continue
+        files.add(path.relative_to(directory))
+    return files
+
+
+def validate_agents_mirror(primary_skill_dirs: list[Path]) -> list[str]:
+    problems: list[str] = []
+    if not AGENTS_SKILLS_DIR.exists():
+        return [error(".agents/skills/ directory is missing; run `uv run python scripts/sync_agents_skills.py`")]
+
+    primary_names = [path.name for path in primary_skill_dirs]
+    mirror_dirs = skill_dirs_in(AGENTS_SKILLS_DIR)
+    mirror_names = [path.name for path in mirror_dirs]
+
+    missing = sorted(set(primary_names) - set(mirror_names))
+    extra = sorted(set(mirror_names) - set(primary_names))
+    if missing:
+        problems.append(error(f".agents/skills/ missing mirrored skill(s): {', '.join(missing)}"))
+    if extra:
+        problems.append(error(f".agents/skills/ has extra skill(s): {', '.join(extra)}"))
+
+    for mirror_dir in mirror_dirs:
+        problems.extend(validate_skill(mirror_dir))
+
+    for primary_dir in primary_skill_dirs:
+        mirror_dir = AGENTS_SKILLS_DIR / primary_dir.name
+        if not mirror_dir.exists():
+            continue
+
+        primary_files = relative_files(primary_dir)
+        mirror_files = relative_files(mirror_dir)
+        missing_files = sorted(primary_files - mirror_files)
+        extra_files = sorted(mirror_files - primary_files)
+        for path in missing_files:
+            problems.append(error(f".agents/skills/{primary_dir.name} missing mirrored file {path.as_posix()}"))
+        for path in extra_files:
+            problems.append(error(f".agents/skills/{primary_dir.name} has extra file {path.as_posix()}"))
+        for path in sorted(primary_files & mirror_files):
+            source = primary_dir / path
+            mirror = mirror_dir / path
+            if source.read_bytes() != mirror.read_bytes():
+                problems.append(error(
+                    f".agents/skills/{primary_dir.name}/{path.as_posix()} differs from "
+                    f"skills/{primary_dir.name}/{path.as_posix()}; run `uv run python scripts/sync_agents_skills.py`"
+                ))
+
+    return problems
+
+
 def main() -> int:
     if not SKILLS_DIR.exists():
         print(error("skills/ directory is missing"), file=sys.stderr)
         return 1
 
-    skill_dirs = sorted(path for path in SKILLS_DIR.iterdir() if path.is_dir())
+    skill_dirs = skill_dirs_in(SKILLS_DIR)
     if not skill_dirs:
         print(error("skills/ contains no skill directories"), file=sys.stderr)
         return 1
@@ -189,13 +253,17 @@ def main() -> int:
     problems: list[str] = []
     for skill_dir in skill_dirs:
         problems.extend(validate_skill(skill_dir))
+    problems.extend(validate_agents_mirror(skill_dirs))
 
     if problems:
         for problem in problems:
             print(problem, file=sys.stderr)
         return 1
 
-    print(f"Validated {len(skill_dirs)} skill(s): {', '.join(path.name for path in skill_dirs)}")
+    print(
+        f"Validated {len(skill_dirs)} skill(s) and .agents mirror: "
+        f"{', '.join(path.name for path in skill_dirs)}"
+    )
     return 0
 
 
