@@ -16,6 +16,8 @@ from eval_event_recover import load_events, summarize_events  # noqa: E402
 from eval_turn_backfill import backfill_records  # noqa: E402
 from eval_logger import RunRecord, append_record, build_record  # noqa: E402
 from eval_scorer import load_records, summarize  # noqa: E402
+from unbounded_eval_logger import build_record as build_unbounded_record  # noqa: E402
+from unbounded_eval_scorer import summarize as summarize_unbounded  # noqa: E402
 
 
 class EvalEventLoggerTests(unittest.TestCase):
@@ -226,6 +228,92 @@ class EvalScorerTests(unittest.TestCase):
         self.assertEqual(summary["aggregate"]["control"]["observed_turn_run_count"], 1)
         self.assertEqual(summary["aggregate"]["control"]["exact_turn_run_count"], 0)
         self.assertEqual(summary["aggregate"]["control"]["mean_turns_observed"], 2)
+
+
+class UnboundedEvalTests(unittest.TestCase):
+    def _args(self, **overrides: object) -> Namespace:
+        data = {
+            "repo": "fastapi/fastapi",
+            "condition": "treatment",
+            "task_id": "fastapi-navigation-routing",
+            "task_type": "navigation",
+            "run_index": 0,
+            "tier": "heavy",
+            "completed": True,
+            "navigation_score": 3,
+            "scope_score": 2,
+            "validation_score": 3,
+            "handoff_score": 2,
+            "turns": 2,
+            "turn_source": "observed",
+            "clarification_count": 0,
+            "files_touched": 0,
+            "lines_changed": 0,
+            "regression_count": 0,
+            "model_name": "gpt-5",
+            "duration_seconds": None,
+            "usage_source": "none",
+            "tokens_input": None,
+            "tokens_output": None,
+            "tests_before_green": None,
+            "tests_after_green": None,
+            "tests_before_summary": None,
+            "tests_after_summary": None,
+            "needs_human_scoring": False,
+            "scoring_notes": "good map",
+            "notes": "pilot",
+        }
+        data.update(overrides)
+        return Namespace(**data)
+
+    def test_unbounded_logger_builds_scored_record(self) -> None:
+        record = build_unbounded_record(self._args())
+        self.assertEqual(record.task_type, "navigation")
+        self.assertEqual(record.turn_source, "observed")
+        self.assertEqual(record.navigation_score, 3)
+        self.assertEqual(record.scope_score, 2)
+
+    def test_unbounded_logger_rejects_inconsistent_turn_source(self) -> None:
+        with self.assertRaisesRegex(ValueError, "turn_source"):
+            build_unbounded_record(self._args(turns=None, turn_source="observed"))
+
+    def test_unbounded_scorer_summarizes_rubric(self) -> None:
+        records = [
+            {
+                "condition": "control",
+                "tier": "medium",
+                "task_type": "navigation",
+                "completed": True,
+                "navigation_score": 2,
+                "scope_score": 1,
+                "validation_score": 2,
+                "handoff_score": 1,
+                "turns": 2,
+                "files_touched": 0,
+                "lines_changed": 0,
+                "regression_count": 0,
+                "clarification_count": 0,
+            },
+            {
+                "condition": "treatment",
+                "tier": "medium",
+                "task_type": "navigation",
+                "completed": True,
+                "navigation_score": 3,
+                "scope_score": 3,
+                "validation_score": 2,
+                "handoff_score": 2,
+                "turns": 2,
+                "files_touched": 0,
+                "lines_changed": 0,
+                "regression_count": 0,
+                "clarification_count": 0,
+            },
+        ]
+        summary = summarize_unbounded(records)
+        self.assertEqual(summary["aggregate"]["control"]["runs"], 1)
+        self.assertEqual(summary["aggregate"]["treatment"]["mean_score_total"], 10)
+        self.assertEqual(summary["by_task_type"]["navigation"]["control"]["mean_score_total"], 6)
 
 
 class EvalEventRecoverTests(unittest.TestCase):

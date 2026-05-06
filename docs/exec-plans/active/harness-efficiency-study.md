@@ -1,6 +1,6 @@
 # ExecPlan: harness-efficiency-study
 
-Status: paused for treatment hardening (pilot data retained; resume with layered treatment)
+Status: completed current-treatment pass; report written
 Owner: maintainer
 Started: 2026-04-28
 
@@ -26,7 +26,7 @@ Reuse path after the skill fix:
 - keep this plan as the pilot record
 - copy or supersede it with a fresh active ExecPlan after cultivate is strengthened and the treatment application protocol is re-run
 - only resume Milestone D mainline evals once treatment validity has been re-audited across all study repos
-- compare the hardened root treatment against the layered treatment before deciding whether layered local `AGENTS.md` files become the default study condition
+- treat the current cultivate skill's layered protocol as the canonical treatment condition; the old root-only treatment is retained only as pilot provenance
 
 ## Purpose / Big Picture
 
@@ -251,6 +251,8 @@ If a repo has insufficient labelled issues, substitute with issues that have cle
 - 2026-04-29: Study execution is now paused and this plan is reclassified as a pilot record. Investigation of `fastapi-treatment`, `celery-treatment`, and `rich-treatment` showed the cultivate treatment was too weakly applied in at least part of the battery, especially around `AGENTS.md` exposing the deeper knowledge-store links. Further Milestone D runs are intentionally halted until cultivate and the treatment protocol are tightened.
 - 2026-04-30: Packaged the Treatment B layered-harness protocol into `skills/cultivate` as version `0.2.5`, including explicit instructions for short nested `AGENTS.md` files in large multi-surface repos, template guidance, eval coverage, and an audit signal for `layered AGENTS coverage`. The local installed skill copy was refreshed to `0.2.5` so subsequent `/cultivate` runs use the layered protocol.
 - 2026-04-30: Created fresh Treatment B baseline copies for all nine study repos at `$STUDY_WORKSPACE/workdirs/*-treatment-b`. Each copy starts from the pinned control SHA, applies the hardened root cultivate harness, adds nested local `AGENTS.md` files to high-leverage subtrees where applicable, and has a local `study-treatment-b` commit. A cultivate audit confirms canonical root `AGENTS.md` structure, deep-context links, and layered coverage for every multi-surface Treatment B copy.
+- 2026-05-04: On the new host, promoted the layered/current-skill baseline to the canonical `treatment` condition. Active workspace paths are now `$STUDY_WORKSPACE/workdirs/*-treatment`; old root-only treatment dirs are archived as `$STUDY_WORKSPACE/workdirs/*-treatment-a-deprecated`; no active `*-treatment-b` paths remain.
+- 2026-05-04: Completed the fast current-treatment pass across all 45 manifest issue slots. The central run log now has paired control/treatment rows for every slot, including explicit non-repro/environment skips. Current-pass result: both conditions completed 34/45 slots with zero recorded regressions; treatment averaged slightly fewer changed lines (`35.29` vs `35.98`) but did not improve completion rate.
 
 ## Decision Log
 
@@ -277,6 +279,8 @@ If a repo has insufficient labelled issues, substitute with issues that have cle
 - 2026-04-29: Make `turns` optional in the run log and add `turn_run_count` to scorer output. Reason: some agent-execution paths provide trustworthy completion and diff data but not comparable turn counts; the study should record those runs without inventing precision or distorting the turn averages.
 - 2026-04-30: Treat layered local `AGENTS.md` files as the Treatment B candidate, not just a one-off FastAPI patch. Reason: the FastAPI issue `#11215` pilot showed the same production fix and validation with slightly less regression-fixture churn, and the next question is whether that layered guidance beats the hardened root-only Treatment A across more repos and issues.
 - 2026-04-30: Keep the original `*-treatment` workdirs as pilot/root-treatment history and create separate `*-treatment-b` workdirs for the restarted treatment condition. Reason: this preserves provenance for the paused study while giving future Milestone D runs a clean, auditable layered baseline.
+- 2026-05-04: Promote Treatment B to the canonical `treatment` name for future runs. Reason: the A/B question has been resolved for study operations; keeping `treatment-b` as the active name would make future prompts and logs carry obsolete experimental terminology. The old root-only treatment remains available only as `treatment-a-deprecated` for pilot provenance.
+- 2026-05-04: Treat the completed current-treatment pass as the study closeout dataset. Reason: it covers every manifest issue slot with paired rows and records skips explicitly, which is enough to report the actual effect size instead of continuing to spend runs chasing a stronger narrative.
 - 2026-04-29: Add a separate append-only event log for live run-state capture. Reason: interruptions and resumptions are easier to reconstruct from a timestamped event trail than from a single final run record, and this keeps recovery support separate from the main scored metrics.
 - 2026-04-29: Abort this study round as a mainline evaluation and preserve it as a pilot. Reason: the current treatment condition is no longer trusted as a uniformly well-applied cultivate harness, so more runs would add cost without adding trustworthy evidence. A later study should reuse the Milestone A-C artifacts but restart Milestone D after the skill and treatment application protocol are repaired.
 
@@ -284,13 +288,15 @@ If a repo has insufficient labelled issues, substitute with issues that have cle
 
 This pilot was still valuable. It validated the logging/scoring workflow, exposed turn-telemetry gaps that are now repaired, and surfaced a much more important methodological issue than any single run outcome: treatment validity is itself a first-class dependency. The current cultivate treatment can produce strong harnesses, but this round showed it can also be applied too weakly to support a trustworthy user-facing comparative study. The right next step is skill hardening and treatment re-audit, not additional eval volume.
 
+Current-treatment closeout, 2026-05-04: after hardening and promoting the layered protocol to the canonical treatment condition, the completed pass shows equal completion (`34/45` per condition), zero recorded regressions, and a small treatment advantage in mean changed lines. The defensible conclusion is mixed: cultivate did not improve completion rate in this dataset, but it produced modest churn reduction overall and clear narrower-patch examples on navigation-sensitive tasks.
+
 ## Artifacts and Notes
 
 - Issue manifest: `docs/exec-plans/active/harness-efficiency-study-issues.md`
 - Run log: `docs/exec-plans/active/harness-efficiency-study-runs.jsonl`
-- Final report (to be created): `docs/exec-plans/completed/harness-efficiency-study-report.md`
+- Final report: `docs/exec-plans/completed/harness-efficiency-study-report.md`
 - External repo workspace: `$STUDY_WORKSPACE`
-- Treatment B restart readout:
+- Current-treatment restart readout (formerly Treatment B):
 
 | Task | Condition | Model | Outcome | Files | Lines | Validation | Notes |
 | --- | --- | --- | ---: | ---: | ---: | --- | --- |
